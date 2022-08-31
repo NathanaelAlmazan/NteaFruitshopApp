@@ -5,7 +5,8 @@ import ProductList from "../sections/pos/ProductList"
 import CategoryList from "../sections/pos/CategoryList"
 import { LoadingOverlay } from '../components/SuspenseLoader'
 
-import { useQuery } from "../custom-hooks"
+import { useQuery, useAppDispatch } from "../custom-hooks"
+import { upsert } from "../redux/slice/cart"
 
 const allCategory: Category = {
   categoryId: 0,
@@ -17,10 +18,10 @@ const allCategory: Category = {
 
 export default function PointOfSale() {
   const { data: products, error, loading } = useQuery<Product[]>("/products?additionalFields=category")
+  const dispatch = useAppDispatch()
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<Category>(allCategory)
-  const [cart, setCart] = useState<CartItem[]>([])
 
   if (error) console.log(error)
 
@@ -43,23 +44,11 @@ export default function PointOfSale() {
     }
   }, [products])
 
-  console.log(cart)
-
   const handleChangeCategory = (category: Category) => setSelectedCategory(category)
 
-  const handleSelectProduct = (productCode: string) => {
-    const index = cart.findIndex(c => c.product.productCode === productCode)
-
-    if (index === -1) {
-      const productIndex = products.findIndex(p => p.productCode === productCode)
-      setCart([ ...cart, { product: products[productIndex], quantity: 1 } ])
-    }
-    else {
-      // eslint-disable-next-line prefer-const
-      let temp = cart;
-      temp[index].quantity += 1;
-      setCart(temp)
-    }
+  const handleSelectProduct = (item: Product) => {
+    const cartItem: CartItem = { product: item, quantity: 1 }
+    dispatch(upsert(cartItem))
   }
 
   return (

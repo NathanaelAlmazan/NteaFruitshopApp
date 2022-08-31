@@ -49,7 +49,7 @@ export default function PosLayout() {
       <CssBaseline />
       <Header open={open} handleDrawerOpen={handleDrawerOpen} />
       <LeftSideBar open={open} handleDrawerClose={handleDrawerClose} />
-      <Tooltip title="Live Customize">
+      <Tooltip title="Current Order">
           <Fab
               component="div"
               onClick={handleToggle}

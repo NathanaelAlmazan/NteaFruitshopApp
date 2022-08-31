@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 // material
 import { Box, Card, Link, Typography, Stack } from '@mui/material'
 import { styled } from '@mui/material/styles'
+
 import { ColorPreview } from '../../components/color-utils'
 
 // types
@@ -16,7 +17,11 @@ const ProductImgStyle = styled('img')({
   height: '100%',
   objectFit: 'cover',
   position: 'absolute',
-  objectPosition: "center"
+  objectPosition: "center",
+  transition: "0.5s",
+  "&:hover": {
+    filter: "brightness(40%)"
+  }
 });
 
 // ----------------------------------------------------------------------
@@ -28,10 +33,29 @@ interface ProductCardProps {
 
 export default function ShopProductCard({ product, selectProduct }: ProductCardProps) {
   const { productImage, productName, unitPrice, discountedPrice, productCategory } = product
+  const [hovered, setHovered] = useState<boolean>(false)
 
   return (
     <Card onClick={selectProduct} sx={{ cursor: "pointer" }}>
-      <Box sx={{ pt: '100%', position: 'relative' }}>
+      <Box onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} sx={{ pt: '100%', position: 'relative' }}>
+        {hovered && (
+          <Typography 
+            component="div" 
+            variant="caption"
+            sx={{
+              zIndex: 9,
+              left: 100,
+              bottom: 150,
+              position: 'absolute',
+              color: "white",
+              textTransform: 'uppercase',
+              border: '2px solid white',
+              p: 1
+            }}
+          >
+            Click to Add in Cart
+          </Typography>
+        )}
         <ProductImgStyle alt={productName} src={productImage} />
       </Box>
 
@@ -58,10 +82,10 @@ export default function ShopProductCard({ product, selectProduct }: ProductCardP
                 textDecoration: 'line-through',
               }}
             >
-              {discountedPrice && `₱ ${discountedPrice.toFixed(2)}`}
+              {discountedPrice > 0 && `₱ ${unitPrice.toFixed(2)}`}
             </Typography>
             &nbsp;
-            {`₱ ${unitPrice.toFixed(2)}`}
+            {discountedPrice > 0 ? `₱ ${(unitPrice - discountedPrice).toFixed(2)}` : `₱ ${unitPrice.toFixed(2)}`}
           </Typography>
         </Stack>
       </Stack>
