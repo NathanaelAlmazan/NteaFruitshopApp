@@ -32,8 +32,8 @@ export default function ProductList({ products, selectProduct, ...other }: Produ
             <motion.div
                   key={product.productCode}
                   initial={{ scale: 0 }}
-                  animate={{ scale: 1, transition:{ delay: 0.5, type: "spring" } }}
-                  exit={{ opacity: 0, transition:{ delay: 0.5} }}     
+                  animate={{ scale: 1, transition:{ delay: 0.3 } }}
+                  exit={{ opacity: 0, transition:{ delay: 0.3 } }}     
                   layout         
             >
                   <ShopProductCard product={product} selectProduct={() => selectProduct(product)} />

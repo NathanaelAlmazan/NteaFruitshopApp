@@ -12,7 +12,7 @@ export default function useQuery<R>(url: string) {
     React.useEffect(() => {
         setLoading(true)
 
-        axios.get("http://localhost:8080/api" + url)
+        axios.get("https://ntea.herokuapp.com/api" + url)
             .then((response) => {
                 setData(response.data)
                 setLoading(false)

@@ -14,6 +14,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Avatar from '@mui/material/Avatar'
+import { AnimatePresence, motion } from 'framer-motion'
 import { styled, useTheme } from '@mui/material/styles'
 
 // Icons
@@ -98,6 +99,7 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
         <Divider />
         <List sx={{ 
             maxHeight: "calc(100% - 250px)",
+            overflowX: "hidden",
             overflowY: "auto",
             "::-webkit-scrollbar": {
                 height: "8px",
@@ -117,49 +119,67 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
                 background: theme.palette.grey[900]
             }
          }}>
-            {cart.items.length === 0 && (
-                <Stack justifyContent="center" alignItems="center">
-                    <Avatar variant="rounded" alt="empty-cart" src="https://res.cloudinary.com/ddpqji6uq/image/upload/v1661948271/graphql_images/empty-cart_c0zya5.png" sx={{ width: 330, height: 280 }} />
-                </Stack>
-            )}
-            {cart.items.map((item) => (
-                <ListItem key={item.product.productCode} alignItems="center">
-                    <ListItemAvatar>
-                        <Avatar variant="rounded" alt={item.product.productName} src={item.product.productImage} />
-                    </ListItemAvatar>
-                    <ListItemText
-                        primary={item.product.productName}
-                        secondary={
-                            <Typography
-                                sx={{ display: 'inline' }}
-                                component="span"
-                                variant="body2"
-                                color="text.primary"
-                            >
-                                    {`₱ ${(item.quantity * (item.product.unitPrice - item.product.discountedPrice)).toFixed(2)}`}
-                            </Typography>
-                        }
-                    />
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                        <ButtonBase onClick={() => handleReduceQuantity(item.product.productCode)} sx={{ borderRadius: '12px' }}>
-                            <HeaderAvatarStyle error={item.quantity === 1} variant="rounded">
-                                {item.quantity > 1 ? <RemoveIcon /> : <DeleteOutlineOutlinedIcon />}
-                            </HeaderAvatarStyle>
-                        </ButtonBase>
-                        <Typography
-                            component="span"
-                            variant="subtitle2"
-                        >
-                                {`${item.quantity} ${item.product.unitTypeCode}`}
-                        </Typography>
-                        <ButtonBase onClick={() => handleAddQuantity(item.product.productCode)} sx={{ borderRadius: '12px' }}>
-                            <HeaderAvatarStyle variant="rounded">
-                                <AddIcon />
-                            </HeaderAvatarStyle>
-                        </ButtonBase>
-                    </Stack>
-                </ListItem>
-            ))}
+            <AnimatePresence>
+                {cart.items.length === 0 && (
+                    <motion.div
+                        key="empty-cart"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1, transition:{ delay: 0.5, type: "spring" } }}
+                        exit={{ opacity: 0 }}  
+                        layout    
+                    >
+                        <Stack justifyContent="center" alignItems="center">
+                            <Avatar variant="rounded" alt="empty-cart" src="https://res.cloudinary.com/ddpqji6uq/image/upload/v1661948271/graphql_images/empty-cart_c0zya5.png" sx={{ width: 330, height: 280 }} />
+                        </Stack>
+                    </motion.div>
+                )}
+                {cart.items.map((item) => (
+                    <motion.div
+                        key={item.product.productCode}
+                        initial={{ x: -150, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1, transition:{ delay: 0.3, type: "spring" } }}
+                        exit={{ x: 150, opacity: 0, transition:{ delay: 0.3 } }}     
+                        layout         
+                    >
+                        <ListItem alignItems="center">
+                            <ListItemAvatar>
+                                <Avatar variant="rounded" alt={item.product.productName} src={item.product.productImage} />
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={item.product.productName}
+                                secondary={
+                                    <Typography
+                                        sx={{ display: 'inline' }}
+                                        component="span"
+                                        variant="body2"
+                                        color="text.primary"
+                                    >
+                                            {`₱ ${(item.quantity * (item.product.unitPrice - item.product.discountedPrice)).toFixed(2)}`}
+                                    </Typography>
+                                }
+                            />
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                                <ButtonBase onClick={() => handleReduceQuantity(item.product.productCode)} sx={{ borderRadius: '12px' }}>
+                                    <HeaderAvatarStyle error={item.quantity === 1} variant="rounded">
+                                        {item.quantity > 1 ? <RemoveIcon /> : <DeleteOutlineOutlinedIcon />}
+                                    </HeaderAvatarStyle>
+                                </ButtonBase>
+                                <Typography
+                                    component="span"
+                                    variant="subtitle2"
+                                >
+                                        {`${item.quantity} ${item.product.unitTypeCode}`}
+                                </Typography>
+                                <ButtonBase onClick={() => handleAddQuantity(item.product.productCode)} sx={{ borderRadius: '12px' }}>
+                                    <HeaderAvatarStyle variant="rounded">
+                                        <AddIcon />
+                                    </HeaderAvatarStyle>
+                                </ButtonBase>
+                            </Stack>
+                        </ListItem>
+                    </motion.div>
+                ))}
+            </AnimatePresence>
         </List>
         <Stack justifyContent="center" alignItems="end" spacing={3} sx={{ position: "absolute", bottom: 0, right: 0, p: 2, width: "100%" }}>
             <Card sx={{ width: "100%" }}>
