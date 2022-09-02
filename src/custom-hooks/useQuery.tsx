@@ -1,7 +1,9 @@
 import React from 'react';
 import axios, { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function useQuery<R>(url: string) {
+    const navigate = useNavigate();
     const [data, setData] = React.useState<R | null>(null)
     const [error, setError] = React.useState<AxiosError | null>(null)
     const [loading, setLoading] = React.useState<boolean>(false)
@@ -17,12 +19,11 @@ export default function useQuery<R>(url: string) {
                 setData(response.data)
                 setLoading(false)
             })
-            .catch((error) => {
-                if (error.response) {
-                    setError(error.response.data)
-                } else if (error.request) {
-                    setError(error.request)
-                }
+            .catch((err) => {
+                const error = err as AxiosError
+
+                if (error.code === "ERR_NETWORK") navigate("/error/offline")
+                else setError(error)
             });
         
     }, [url, refetch])

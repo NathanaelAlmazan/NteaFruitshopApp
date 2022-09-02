@@ -7,6 +7,7 @@ import { SuspenseLoader } from './components/SuspenseLoader'
 
 //Pages
 const PointOfSale = React.lazy(() => import("./pages/PointOfSale"))
+const OfflinePage = React.lazy(() => import("./pages/Offline"))
 
 export default function Router() {
     return useRoutes([
@@ -21,7 +22,14 @@ export default function Router() {
             path: '',
             element: <LogoOnlyLayout />,
             children: [
-                { path: '/', element: <Navigate to="/app/pos" /> },
+                { path: '/', element: <Navigate to="/app/pos" /> }
+            ]
+        },
+        {
+            path: 'error',
+            element: <LogoOnlyLayout />,
+            children: [
+                { path: 'offline', element: <SuspenseLoader children={<OfflinePage />} /> },
             ]
         }
     ])

@@ -1,9 +1,10 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { cartSlice } from "../slice"
+import { cartSlice, connectionSlice } from "../slice"
 
 const store = configureStore({
     reducer: combineReducers({
       cart: cartSlice,
+      connection: connectionSlice
     })
   });
 
