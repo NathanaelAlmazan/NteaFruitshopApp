@@ -1,16 +1,14 @@
 import React from 'react'
 import { Outlet } from "react-router-dom" 
-import { styled, useTheme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 
 import LeftSideBar from "./LeftSideBar"
 import RightSideBar from "./RightSideBar"
 import Header from "./Header"
-import Tooltip from '@mui/material/Tooltip'
-import Fab from '@mui/material/Fab'
-import IconButton from '@mui/material/IconButton'
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
+import { useAppSelector } from "../../custom-hooks"
+import ProductCartWidget from "../../components/ProductCartWidget"
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme }) => ({
   flexGrow: 1,
@@ -35,7 +33,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function PosLayout() {
-  const theme = useTheme();
+  const { cart: items } = useAppSelector((state) => state)
   const [open, setOpen] = React.useState(false);
   const [cart, setCart] = React.useState(false);
 
@@ -49,30 +47,7 @@ export default function PosLayout() {
       <CssBaseline />
       <Header open={open} handleDrawerOpen={handleDrawerOpen} />
       <LeftSideBar open={open} handleDrawerClose={handleDrawerClose} />
-      <Tooltip title="Current Order">
-          <Fab
-              component="div"
-              onClick={handleToggle}
-              size="medium"
-              variant="circular"
-              color="secondary"
-              sx={{
-                  borderRadius: 0,
-                  borderTopLeftRadius: '50%',
-                  borderBottomLeftRadius: '50%',
-                  borderTopRightRadius: '50%',
-                  borderBottomRightRadius: '4px',
-                  top: '25%',
-                  position: 'fixed',
-                  right: 10,
-                  zIndex: theme.zIndex.speedDial
-              }}
-          >
-              <IconButton color="inherit" size="large" disableRipple>
-                  <ShoppingCartOutlinedIcon />
-              </IconButton>
-          </Fab>
-      </Tooltip>
+      <ProductCartWidget value={items.items.length} handleClick={handleToggle} />
       <Main>
         <DrawerHeader />
         <Outlet />

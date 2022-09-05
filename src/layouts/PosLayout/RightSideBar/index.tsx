@@ -78,6 +78,7 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
                 boxSizing: 'border-box'
             },
         }}
+        onClose={handleDrawerClose}
         variant={matches ? "permanent" : "temporary"}
         anchor="right"
         open={matches || open}

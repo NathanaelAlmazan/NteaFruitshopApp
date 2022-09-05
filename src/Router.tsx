@@ -2,12 +2,14 @@ import React from 'react'
 import { useRoutes, Navigate } from "react-router-dom"
 
 // Layouts
-import { PosLayout, LogoOnlyLayout } from "./layouts"
+import { PosLayout, DashboardLayout, LogoOnlyLayout } from "./layouts"
 import { SuspenseLoader } from './components/SuspenseLoader'
 
 //Pages
 const PointOfSale = React.lazy(() => import("./pages/PointOfSale"))
 const OfflinePage = React.lazy(() => import("./pages/Offline"))
+const Products = React.lazy(() => import("./pages/products"))
+const CreateProduct = React.lazy(() => import("./pages/products/create"))
 
 export default function Router() {
     return useRoutes([
@@ -16,6 +18,14 @@ export default function Router() {
             element: <PosLayout />,
             children: [
                 { path: 'pos', element: <SuspenseLoader children={<PointOfSale />} /> },
+            ]
+        },
+        {
+            path: 'admin',
+            element: <DashboardLayout />,
+            children: [
+                { path: 'products', element: <SuspenseLoader children={<Products />} /> },
+                { path: 'products/create', element: <SuspenseLoader children={<CreateProduct />} /> },
             ]
         },
         {

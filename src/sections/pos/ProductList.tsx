@@ -2,6 +2,7 @@ import React from 'react';
 // material
 import Grid from '@mui/material/Grid';
 import ShopProductCard from './ProductCard';
+import AdminProductCard from '../products/ProductCard'
 
 // animation
 import { AnimatePresence, motion } from 'framer-motion'
@@ -13,10 +14,11 @@ import { Product } from '../../pages/PointOfSale';
 
 interface ProductListProps {
   products: Product[];
+  edit?: boolean;
   selectProduct: (item: Product) => void;
 }
 
-export default function ProductList({ products, selectProduct, ...other }: ProductListProps) {
+export default function ProductList({ products, edit, selectProduct, ...other }: ProductListProps) {
   return (
     <Grid 
       container 
@@ -28,7 +30,7 @@ export default function ProductList({ products, selectProduct, ...other }: Produ
     >
       <AnimatePresence>
         {products.map((product) => (
-          <Grid key={product.productCode} item xs={12} sm={6} md={4}>
+          <Grid key={product.productCode} item xs={12} sm={6} md={3}>
             <motion.div
                   key={product.productCode}
                   initial={{ scale: 0 }}
@@ -36,7 +38,11 @@ export default function ProductList({ products, selectProduct, ...other }: Produ
                   exit={{ opacity: 0, transition:{ delay: 0.3 } }}     
                   layout         
             >
-                  <ShopProductCard product={product} selectProduct={() => selectProduct(product)} />
+              {edit ? (
+                <AdminProductCard product={product} selectProduct={() => selectProduct(product)} />
+              ): (
+                <ShopProductCard product={product} selectProduct={() => selectProduct(product)} />
+              )}    
             </motion.div>
           </Grid>
         ))}

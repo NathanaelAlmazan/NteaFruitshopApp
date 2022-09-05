@@ -61,7 +61,6 @@ export default function PointOfSale() {
 
       <ProductList products={filteredProducts} selectProduct={handleSelectProduct} />
 
-
       <LoadingOverlay open={loading} />
     </div>
   )

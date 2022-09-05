@@ -44,8 +44,8 @@ export default function ShopProductCard({ product, selectProduct }: ProductCardP
             variant="caption"
             sx={{
               zIndex: 9,
-              left: 100,
-              bottom: 150,
+              left: { sm: 100, lg: 50 },
+              bottom: { sm: 150, lg: 90 },
               position: 'absolute',
               color: "white",
               textTransform: 'uppercase',
@@ -68,10 +68,7 @@ export default function ShopProductCard({ product, selectProduct }: ProductCardP
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           {productCategory && (
-            <Stack direction="row" spacing={1}>
-              <ColorPreview colors={["red"]} />
-              <Typography variant="caption">{productCategory.categoryName}</Typography>
-            </Stack>
+            <ColorPreview colors={["red", "gray"]} />
           )}
           <Typography variant="subtitle1">
             <Typography
