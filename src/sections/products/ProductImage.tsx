@@ -9,7 +9,8 @@ const ProductImgStyle = styled('img')({
     width: '100%',
     height: '100%',
     objectFit: 'cover',
-    position: 'absolute'
+    position: 'absolute',
+    borderRadius: '10px',
 });
 
 interface ProductImageProps {

@@ -4,8 +4,6 @@ import { Link as RouterLink } from 'react-router-dom'
 import { Box, Card, Link, Typography, Stack } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
-import { ColorPreview } from '../../components/color-utils'
-
 // types
 import { Product } from '../..//pages/PointOfSale'
 
@@ -44,8 +42,8 @@ export default function ShopProductCard({ product, selectProduct }: ProductCardP
             variant="caption"
             sx={{
               zIndex: 9,
-              left: { sm: 100, lg: 50 },
-              bottom: { sm: 150, lg: 90 },
+              right: 20,
+              top: 20,
               position: 'absolute',
               color: "white",
               textTransform: 'uppercase',
@@ -59,32 +57,29 @@ export default function ShopProductCard({ product, selectProduct }: ProductCardP
         <ProductImgStyle alt={productName} src={productImage} />
       </Box>
 
-      <Stack spacing={2} sx={{ p: 3 }}>
+      <Stack sx={{ p: 2 }}>
         <Link to="#" color="inherit" underline="hover" component={RouterLink}>
-          <Typography variant="subtitle2" noWrap>
+          <Typography variant="subtitle1" noWrap>
             {productName}
           </Typography>
         </Link>
-
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          {productCategory && (
-            <ColorPreview colors={["red", "gray"]} />
-          )}
-          <Typography variant="subtitle1">
-            <Typography
-              component="span"
-              variant="body1"
-              sx={{
-                color: 'text.disabled',
-                textDecoration: 'line-through',
-              }}
-            >
-              {discountedPrice > 0 && `₱ ${unitPrice.toFixed(2)}`}
-            </Typography>
-            &nbsp;
-            {discountedPrice > 0 ? `₱ ${(unitPrice - discountedPrice).toFixed(2)}` : `₱ ${unitPrice.toFixed(2)}`}
+        <Typography variant="caption">
+          {productCategory && productCategory.categoryName}
+        </Typography>
+        <Typography component="div" variant="subtitle1" align="right" sx={{ mt: 2 }}>
+          <Typography
+            component="span"
+            variant="body1"
+            sx={{
+              color: 'text.disabled',
+              textDecoration: 'line-through',
+            }}
+          >
+            {discountedPrice > 0 && `₱ ${unitPrice.toFixed(2)}`}
           </Typography>
-        </Stack>
+          &nbsp;
+          {discountedPrice > 0 ? `₱ ${(unitPrice - discountedPrice).toFixed(2)}` : `₱ ${unitPrice.toFixed(2)}`}
+        </Typography>
       </Stack>
     </Card>
   );

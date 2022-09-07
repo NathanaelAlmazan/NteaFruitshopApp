@@ -16,9 +16,10 @@ interface ProductListProps {
   products: Product[];
   edit?: boolean;
   selectProduct: (item: Product) => void;
+  deleteProduct?: (item: Product) => void;
 }
 
-export default function ProductList({ products, edit, selectProduct, ...other }: ProductListProps) {
+export default function ProductList({ products, edit, selectProduct, deleteProduct, ...other }: ProductListProps) {
   return (
     <Grid 
       container 
@@ -38,8 +39,8 @@ export default function ProductList({ products, edit, selectProduct, ...other }:
                   exit={{ opacity: 0, transition:{ delay: 0.3 } }}     
                   layout         
             >
-              {edit ? (
-                <AdminProductCard product={product} selectProduct={() => selectProduct(product)} />
+              {edit && deleteProduct ? (
+                <AdminProductCard product={product} selectProduct={() => selectProduct(product)} deleteProduct={() => deleteProduct(product)} />
               ): (
                 <ShopProductCard product={product} selectProduct={() => selectProduct(product)} />
               )}    

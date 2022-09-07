@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
+import { useQuery } from "../../custom-hooks"
 // material
 import {
   Box,
@@ -9,38 +10,18 @@ import {
   Divider,
   IconButton,
   Typography,
+  FormGroup,
+  Tooltip,
+  useTheme
 } from '@mui/material';
-// components
+import FilterCategControl from "./FilterCategControl"
+//icons
 import CloseIcon from '@mui/icons-material/Close';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
-
-// ----------------------------------------------------------------------
-
-export const SORT_BY_OPTIONS = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'priceDesc', label: 'Price: High-Low' },
-  { value: 'priceAsc', label: 'Price: Low-High' },
-];
-export const FILTER_GENDER_OPTIONS = ['Men', 'Women', 'Kids'];
-export const FILTER_CATEGORY_OPTIONS = ['All', 'Shose', 'Apparel', 'Accessories'];
-export const FILTER_RATING_OPTIONS = ['up4Star', 'up3Star', 'up2Star', 'up1Star'];
-export const FILTER_PRICE_OPTIONS = [
-  { value: 'below', label: 'Below $25' },
-  { value: 'between', label: 'Between $25 - $75' },
-  { value: 'above', label: 'Above $75' },
-];
-export const FILTER_COLOR_OPTIONS = [
-  '#00AB55',
-  '#000000',
-  '#FFFFFF',
-  '#FFC0CB',
-  '#FF4842',
-  '#1890FF',
-  '#94D82D',
-  '#FFC107',
-];
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+// types
+import { Category } from '../../pages/PointOfSale'
 
 // ----------------------------------------------------------------------
 
@@ -57,6 +38,10 @@ interface ShopFilterSidebarProps {
 }
 
 export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter }: ShopFilterSidebarProps) {
+  const theme = useTheme()
+  const { data: categories, refetchData } = useQuery<Category[]>("/category")
+  const [addCategory, setAddCategory] = useState<boolean>(false)
+
   return (
     <>
       <Button disableRipple color="inherit" endIcon={<FilterListIcon />} onClick={onOpenFilter}>
@@ -71,29 +56,79 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
           sx: { width: 280, border: 'none', overflow: 'hidden' },
         }}
       >
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 1, py: 2 }}>
-          <Typography variant="subtitle1" sx={{ ml: 1 }}>
-            Filters
-          </Typography>
-          <IconButton onClick={onCloseFilter}>
-            <CloseIcon />
-          </IconButton>
-        </Stack>
+        <div style={{ position: "relative", height: "100%", }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 1, py: 2 }}>
+            <Typography variant="subtitle1" sx={{ ml: 1 }}>
+              Filters
+            </Typography>
+            <IconButton onClick={onCloseFilter}>
+              <CloseIcon />
+            </IconButton>
+          </Stack>
 
-        <Divider />
+          <Divider />
 
-        <Box sx={{ p: 3 }}>
-          <Button
-            fullWidth
-            size="large"
-            type="submit"
-            color="inherit"
-            variant="outlined"
-            startIcon={<ClearAllIcon />}
+          <Stack 
+            spacing={3} 
+            sx={{ p: 3, 
+              maxHeight: "calc(100% - 150px)",
+              overflowY: "auto",
+              "::-webkit-scrollbar": {
+                height: "8px",
+                width: "8px"
+              },
+                
+              /* Track */
+              "::-webkit-scrollbar-track": {
+                  background: theme.palette.grey[300] 
+              },
+                
+              /* Handle */
+              "::-webkit-scrollbar-thumb": {
+                  background: theme.palette.primary.main
+              },
+                
+                /* Handle on hover */
+              "::-webkit-scrollbar-thumb:hover": {
+                  background: theme.palette.primary.dark
+              }
+            }}
           >
-            Clear All
-          </Button>
-        </Box>
+            <div>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                <Typography variant="subtitle1">
+                  Categories
+                </Typography>
+                <Tooltip title="Add Category">
+                    <IconButton onClick={() => setAddCategory(true)}>
+                        <AddOutlinedIcon />
+                    </IconButton>
+                </Tooltip>
+              </Stack>
+              <FormGroup>
+                {addCategory && (
+                  <FilterCategControl _cancel={() => setAddCategory(false)} refresh={refetchData} create />
+                )}
+                {categories && categories.map(category => (
+                  <FilterCategControl key={category.categoryId} category={category} />
+                ))}
+              </FormGroup>
+            </div>
+          </Stack>
+
+          <Box sx={{ p: 3, position: "absolute", width: "100%", bottom: 0, right: 0 }}>
+            <Button
+              fullWidth
+              size="large"
+              type="submit"
+              color="inherit"
+              variant="outlined"
+              startIcon={<ClearAllIcon />}
+            >
+              Clear All
+            </Button>
+          </Box>
+        </div>
       </Drawer>
     </>
   );

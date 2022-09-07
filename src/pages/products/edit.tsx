@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
 // mui
 import Container from '@mui/material/Container'
 import Card from '@mui/material/Card'
@@ -11,9 +12,11 @@ import ProductForm from '../../sections/products/ProductForm'
 // hooks
 import { useQuery } from '../../custom-hooks'
 // types
-import { UnitType, Category } from "../PointOfSale"
+import { UnitType, Category, Product } from "../PointOfSale"
 
-export default function CreateProductPage() {
+export default function EditProductPage() {
+  const { code } = useParams()
+  const { data: product, loading: pLoading } = useQuery<Product>(`/products/${code}`)
   const { data: categories, loading: cLoading } = useQuery<Category[]>("/category")
   const { data: units, loading: uLoading } = useQuery<UnitType[]>("/units")
   const [image, setImage] = useState<File | null>(null)
@@ -22,27 +25,29 @@ export default function CreateProductPage() {
   
   return (
     <Container>
-        <Header title="New Product" back />
+        <Header title={product && `Edit ${product.productName}`} back />
 
         <Grid component={Card} container spacing={2} justifyContent="space-between" sx={{ p: 2 }}>
             <Grid item sm={12} md={5}>
               <ProductImage 
                 onImageChange={handleImageChange}
                 imageFile={image}
+                imageURL={product && product.productImage}
               />
             </Grid>
             <Grid item sm={12} md={7}>
-              {Boolean(categories && units) && (
+              {Boolean(product && categories && units) &&  (
                 <ProductForm 
-                  categories={categories} 
-                  units={units} 
-                  image={image}
+                    categories={categories} 
+                    units={units} 
+                    image={image}
+                    product={product}
                 />
               )}
             </Grid>
         </Grid>
 
-        <LoadingOverlay open={cLoading || uLoading} />
+        <LoadingOverlay open={cLoading || uLoading || pLoading} />
     </Container>
   )
 }

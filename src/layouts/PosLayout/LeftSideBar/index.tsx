@@ -26,7 +26,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'space-between',
 }));
 
-const ListItemStyle = styled(ListItemButton, { shouldForwardProp: (prop) => prop !== "activee" })<{
+const ListItemStyle = styled(ListItemButton, { shouldForwardProp: (prop) => prop !== "active" })<{
     active?: boolean;
 }>(({ theme, active }) => ({
     height: 48,
@@ -109,7 +109,7 @@ export default function LeftSideBar({ open, handleDrawerClose }: LeftSideBarProp
         {appPaths.map((path) => (
             <ListItemStyle 
                 key={path.pathname}
-                active={path.pathname === pathname}
+                active={Boolean(path.pathname === pathname)}
                 onClick={() => handleNavigate(path.pathname)}
                 disableGutters
             >
