@@ -48,7 +48,7 @@ export default function AdminProductCard({ product, selectProduct, deleteProduct
           </Typography>
         </Link>
         <Typography variant="caption">
-          {productCategory && productCategory.categoryName}
+          {productCategory ? productCategory.categoryName : "Unassigned"}
         </Typography>
       </Stack>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}>

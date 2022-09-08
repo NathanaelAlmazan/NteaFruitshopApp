@@ -15,13 +15,15 @@ import {
   useTheme
 } from '@mui/material';
 import FilterCategControl from "./FilterCategControl"
+import FilterUnitsControl from "./FilterUnitsControl"
+import { AnimatePresence, motion } from 'framer-motion';
 //icons
 import CloseIcon from '@mui/icons-material/Close';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 // types
-import { Category } from '../../pages/PointOfSale'
+import { Category, UnitType } from '../../pages/PointOfSale'
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +41,9 @@ interface ShopFilterSidebarProps {
 
 export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter }: ShopFilterSidebarProps) {
   const theme = useTheme()
-  const { data: categories, refetchData } = useQuery<Category[]>("/category")
+  const { data: categories, refetchData: refreshCategory } = useQuery<Category[]>("/category")
+  const { data: units, refetchData: refreshUnits } = useQuery<UnitType[]>("/units")
+  const [addUnits, setAddUnits] = useState<boolean>(false)
   const [addCategory, setAddCategory] = useState<boolean>(false)
 
   return (
@@ -72,6 +76,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
             spacing={3} 
             sx={{ p: 3, 
               maxHeight: "calc(100% - 150px)",
+              overflowX: "hidden",
               overflowY: "auto",
               "::-webkit-scrollbar": {
                 height: "8px",
@@ -106,14 +111,56 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
                 </Tooltip>
               </Stack>
               <FormGroup>
-                {addCategory && (
-                  <FilterCategControl _cancel={() => setAddCategory(false)} refresh={refetchData} create />
-                )}
-                {categories && categories.map(category => (
-                  <FilterCategControl key={category.categoryId} category={category} />
-                ))}
+                <AnimatePresence>
+                  {addCategory && (
+                    <FilterCategControl cancel={() => setAddCategory(false)} refresh={refreshCategory} create />
+                  )}
+                  {categories && categories.map((category, i) => (
+                    <motion.div
+                      key={category.categoryId}
+                      initial={{ x: -150, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1, transition:{ delay: 0.2 * i, type: "spring" } }}
+                      exit={{ x: 150, opacity: 0 }}  
+                      layout    
+                    >
+                      <FilterCategControl category={category} refresh={refreshCategory} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </FormGroup>
             </div>
+
+            <div>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                <Typography variant="subtitle1">
+                  Unit Measures
+                </Typography>
+                <Tooltip title="Add Units">
+                    <IconButton onClick={() => setAddUnits(true)}>
+                        <AddOutlinedIcon />
+                    </IconButton>
+                </Tooltip>
+              </Stack>
+              <FormGroup>
+                <AnimatePresence>
+                  {addUnits && (
+                    <FilterUnitsControl cancel={() => setAddUnits(false)} refresh={refreshUnits} create />
+                  )}
+                  {units && units.filter(u => u.unitCode !== "pcs").map((unit, i) => (
+                    <motion.div
+                      key={unit.unitCode}
+                      initial={{ x: -150, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1, transition:{ delay: 0.2 * i, type: "spring" } }}
+                      exit={{ x: 150, opacity: 0 }}  
+                      layout    
+                    >
+                      <FilterUnitsControl units={unit} refresh={refreshUnits} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </FormGroup>
+            </div>
+
           </Stack>
 
           <Box sx={{ p: 3, position: "absolute", width: "100%", bottom: 0, right: 0 }}>

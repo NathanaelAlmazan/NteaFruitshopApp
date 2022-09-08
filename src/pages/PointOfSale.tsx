@@ -37,7 +37,7 @@ export default function PointOfSale() {
       const categ: Category[] = [allCategory].concat(products.map(category => category.productCategory))
 
       setCategories(categ.filter((value, index, self) =>
-        index === self.findIndex((t) => (
+        value !== null && index === self.findIndex((t) => (
           t.categoryId === value.categoryId
         ))
       ))

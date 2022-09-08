@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from '../../custom-hooks'
-import uploadFile from "../../firebase/upload"
 // material
 import {
     Stack,
@@ -10,26 +9,28 @@ import {
     Button,
     Checkbox,
     Tooltip,
-    TextField,
-    InputAdornment
+    TextField
   } from '@mui/material';
 //icons
 import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 // types
-import { Category } from '../../pages/PointOfSale'
+import { UnitType } from '../../pages/PointOfSale'
 
-interface FilterCategControlProps { category?: Category, create?: boolean, cancel?: () => void, refresh?: () => void }
+interface FilterCategControlProps { units?: UnitType, create?: boolean, cancel?: () => void, refresh?: () => void }
 
-export default function FilterCategControl({ category, create, cancel, refresh }: FilterCategControlProps) {
+export default function FilterCategControl({ units, create, cancel, refresh }: FilterCategControlProps) {
   const { insert, update, remove, data, error } = useMutation()
   const [edit, setEdit] = useState<boolean>(Boolean(create))
   const [deleteMode, setDelete] = useState<boolean>(false)
-  const [name, setName] = useState<string>(category ? category.categoryName : "")
-  const [icon, setIcon] = useState<File>(null)
+  const [formData, setFormData] = useState<{ name: string, code: string }>({
+    name: units ? units.unitLabel : "",
+    code: units ? units.unitCode : ""
+  })
+
+  const { name, code } = formData
 
   useEffect(() => {
     if (data) {
@@ -39,43 +40,29 @@ export default function FilterCategControl({ category, create, cancel, refresh }
     }
   }, [data, create])
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => setName(event.target.value)
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) setIcon(event.target.files[0])
-  }
+  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, [event.target.name]: event.target.value })
 
   const handleCancelEdit = () => {
     if (create && cancel) cancel()
     else setEdit(!edit)
 
-    setName(category ? category.categoryName : "")
-    setIcon(null)
+    setFormData({ name: "", code: "" })
   }
 
   const handleSaveCategory = async () => {
-    if (create) {
-        let url: string = null
-        if (icon) url = await uploadFile(icon)
-        
-        insert("/category", JSON.stringify({
-            categoryName: name,
-            categoryIcon: url
+    if (create) insert("/units", JSON.stringify({
+            unitCode: code,
+            unitLabel: name
         }))
 
-    } else {
-        let url: string = category.categoryIcon
-        if (icon) url = await uploadFile(icon)
-        
-        update("/category", JSON.stringify({
-            categoryId: category.categoryId,
-            categoryName: name,
-            categoryIcon: url
+    else update("/units", JSON.stringify({
+            unitCode: units.unitCode,
+            unitLabel: name
         }))
-    }
   }
 
   const handleDeleteCategory = () => {
-    if (category) remove(`/category/${category.categoryId}`)
+    if (units) remove(`/units/${units.unitCode}`)
   }
 
   if (deleteMode) return (
@@ -91,32 +78,29 @@ export default function FilterCategControl({ category, create, cancel, refresh }
   return (
     <Stack direction="row" justifyContent="space-between">
         {edit ? (
-            <TextField 
-                name="categoryName"
-                variant="standard"
-                value={name}
-                onChange={handleNameChange}
-                placeholder="Category Name"
-                error={error !== null}
-                helperText={error ? error.errors[0] : icon && `Icon: ${icon.name.slice(0, 12)}...`}
-                InputProps={{
-                    endAdornment: <InputAdornment position="end">
-                        <Tooltip title="Upload Icon">
-                            <IconButton component="label">
-                                <AddPhotoAlternateOutlinedIcon />
-                                <input 
-                                    type="file" 
-                                    accept="image/png, image/jpeg, image/jpg"
-                                    onChange={event => handleImageChange(event)}
-                                    hidden 
-                                />
-                            </IconButton>
-                        </Tooltip>
-                    </InputAdornment>
-                }}
-            />
+            <Stack direction="row" spacing={1} justifyContent="flex-start" alignItems="center">
+                <TextField 
+                    name="name"
+                    variant="standard"
+                    value={name}
+                    placeholder="Label"
+                    onChange={handleTextChange}
+                    error={error !== null}
+                    helperText={error && error.errors[0]}
+                />
+                <TextField 
+                    name="code"
+                    variant="standard"
+                    value={code}
+                    onChange={handleTextChange}
+                    disabled={!create}
+                    placeholder="Code"
+                    error={error !== null || code.length > 3}
+                    sx={{ width: "45%" }}
+                />
+            </Stack>
         ) : (
-            <FormControlLabel control={<Checkbox />} label={category && category.categoryName} />
+            <FormControlLabel control={<Checkbox />} label={units && `${units.unitLabel} (${units.unitCode})`} />
         )}
         <Stack direction="row">
             {edit ? (

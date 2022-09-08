@@ -64,7 +64,7 @@ export default function ShopProductCard({ product, selectProduct }: ProductCardP
           </Typography>
         </Link>
         <Typography variant="caption">
-          {productCategory && productCategory.categoryName}
+          {productCategory ? productCategory.categoryName : "Unassigned"}
         </Typography>
         <Typography component="div" variant="subtitle1" align="right" sx={{ mt: 2 }}>
           <Typography
