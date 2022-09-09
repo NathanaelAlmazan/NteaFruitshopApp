@@ -22,9 +22,16 @@ import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternate
 // types
 import { Category } from '../../pages/PointOfSale'
 
-interface FilterCategControlProps { category?: Category, create?: boolean, cancel?: () => void, refresh?: () => void }
+interface FilterCategControlProps { 
+    selected?: boolean;
+    category?: Category, 
+    create?: boolean, 
+    cancel?: () => void, 
+    refresh?: () => void,
+    handleClick?: () => void
+}
 
-export default function FilterCategControl({ category, create, cancel, refresh }: FilterCategControlProps) {
+export default function FilterCategControl({ selected, category, create, cancel, refresh, handleClick }: FilterCategControlProps) {
   const { insert, update, remove, data, error } = useMutation()
   const [edit, setEdit] = useState<boolean>(Boolean(create))
   const [deleteMode, setDelete] = useState<boolean>(false)
@@ -116,7 +123,7 @@ export default function FilterCategControl({ category, create, cancel, refresh }
                 }}
             />
         ) : (
-            <FormControlLabel control={<Checkbox />} label={category && category.categoryName} />
+            <FormControlLabel control={<Checkbox checked={selected} />} label={category && category.categoryName} onClick={handleClick} />
         )}
         <Stack direction="row">
             {edit ? (

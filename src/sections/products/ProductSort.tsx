@@ -14,7 +14,7 @@ const SORT_BY_OPTIONS = [
   { value: 'priceAsc', label: 'Price: Low-High' }
 ];
 
-export default function ShopProductSort() {
+export default function ShopProductSort({ selected, setSelected }: { selected: string, setSelected: (value: string) => void }) {
   const [open, setOpen] = useState(null);
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -24,6 +24,11 @@ export default function ShopProductSort() {
   const handleClose = () => {
     setOpen(null);
   };
+
+  const handleManuClick = (value: string) => {
+    setSelected(value)
+    setOpen(false)
+  }
 
   return (
     <>
@@ -35,7 +40,7 @@ export default function ShopProductSort() {
       >
         Sort By:&nbsp;
         <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
-          Newest
+          {SORT_BY_OPTIONS.find(o => o.value === selected).label}
         </Typography>
       </Button>
       <Menu
@@ -49,8 +54,8 @@ export default function ShopProductSort() {
         {SORT_BY_OPTIONS.map((option) => (
           <MenuItem
             key={option.value}
-            selected={option.value === 'newest'}
-            onClick={handleClose}
+            selected={option.value === selected}
+            onClick={() => handleManuClick(option.value)}
             sx={{ typography: 'body2' }}
           >
             {option.label}

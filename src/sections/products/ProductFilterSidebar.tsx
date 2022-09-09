@@ -31,15 +31,20 @@ ShopFilterSidebar.propTypes = {
   isOpenFilter: PropTypes.bool,
   onOpenFilter: PropTypes.func,
   onCloseFilter: PropTypes.func,
-};
+}
 
 interface ShopFilterSidebarProps {
   isOpenFilter: boolean;
+  selectedCategories: number[];
+  selectedUnits: string[];
   onOpenFilter: () => void;
   onCloseFilter: () => void;
+  selectCategory:(id: number) => void;
+  selectUnits: (code: string) => void;
+  clearFilters: () => void;
 }
 
-export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter }: ShopFilterSidebarProps) {
+export default function ShopFilterSidebar({ isOpenFilter, selectedCategories, selectedUnits, onOpenFilter, onCloseFilter, selectCategory, selectUnits, clearFilters }: ShopFilterSidebarProps) {
   const theme = useTheme()
   const { data: categories, refetchData: refreshCategory } = useQuery<Category[]>("/category")
   const { data: units, refetchData: refreshUnits } = useQuery<UnitType[]>("/units")
@@ -123,7 +128,12 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
                       exit={{ x: 150, opacity: 0 }}  
                       layout    
                     >
-                      <FilterCategControl category={category} refresh={refreshCategory} />
+                      <FilterCategControl 
+                        selected={selectedCategories.includes(category.categoryId)}
+                        category={category} 
+                        handleClick={() => selectCategory(category.categoryId)}
+                        refresh={refreshCategory} 
+                      />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -154,7 +164,12 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
                       exit={{ x: 150, opacity: 0 }}  
                       layout    
                     >
-                      <FilterUnitsControl units={unit} refresh={refreshUnits} />
+                      <FilterUnitsControl 
+                        selected={selectedUnits.includes(unit.unitCode)}
+                        units={unit} 
+                        refresh={refreshUnits} 
+                        handleClick={() => selectUnits(unit.unitCode)}
+                      />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -170,6 +185,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
               type="submit"
               color="inherit"
               variant="outlined"
+              onClick={clearFilters}
               startIcon={<ClearAllIcon />}
             >
               Clear All

@@ -2,6 +2,8 @@ import React from 'react';
 import axios, { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const baseURL = "https://ntea.herokuapp.com/api"
+
 interface ErrorResponseData {
     timestamp: string;
     errors: string[];
@@ -16,7 +18,7 @@ export default function useMutation<R>(_url?: string, _body?: string) {
 
     React.useEffect(() => {
        if (_url && _body) {
-            axios.post("http://localhost:8080/api" + _url, _body, { headers: { 'Accept': 'application/json' } })
+            axios.post(baseURL + _url, _body, { headers: { 'Accept': 'application/json' } })
                 .then((response) => {
                     setData(response.data)
                     setLoading(false)
@@ -34,7 +36,7 @@ export default function useMutation<R>(_url?: string, _body?: string) {
     const insert = (url: string, body: string) => {
         setLoading(true)
 
-        axios.post("http://localhost:8080/api" + url, body, { headers: { 'Content-Type': 'application/json' } })
+        axios.post(baseURL + url, body, { headers: { 'Content-Type': 'application/json' } })
             .then((response) => {
                 setData(response.data)
                 setLoading(false)
@@ -50,7 +52,7 @@ export default function useMutation<R>(_url?: string, _body?: string) {
     const update = (url: string, body: string) => {
         setLoading(true)
 
-        axios.put("http://localhost:8080/api" + url, body, { headers: { 'Content-Type': 'application/json' } })
+        axios.put(baseURL + url, body, { headers: { 'Content-Type': 'application/json' } })
             .then((response) => {
                 setData(response.data)
                 setLoading(false)
@@ -66,7 +68,7 @@ export default function useMutation<R>(_url?: string, _body?: string) {
     const remove = (url: string) => {
         setLoading(true)
 
-        axios.delete("http://localhost:8080/api" + url, { headers: { 'Content-Type': 'application/json' } })
+        axios.delete(baseURL + url, { headers: { 'Content-Type': 'application/json' } })
             .then((response) => {
                 setData(response.data)
                 setLoading(false)

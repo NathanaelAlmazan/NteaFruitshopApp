@@ -19,9 +19,16 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // types
 import { UnitType } from '../../pages/PointOfSale'
 
-interface FilterCategControlProps { units?: UnitType, create?: boolean, cancel?: () => void, refresh?: () => void }
+interface FilterCategControlProps {
+    selected?: boolean,
+    units?: UnitType, 
+    create?: boolean, 
+    cancel?: () => void, 
+    refresh?: () => void,
+    handleClick?: () => void
+}
 
-export default function FilterCategControl({ units, create, cancel, refresh }: FilterCategControlProps) {
+export default function FilterCategControl({ selected, units, create, cancel, refresh, handleClick }: FilterCategControlProps) {
   const { insert, update, remove, data, error } = useMutation()
   const [edit, setEdit] = useState<boolean>(Boolean(create))
   const [deleteMode, setDelete] = useState<boolean>(false)
@@ -100,7 +107,7 @@ export default function FilterCategControl({ units, create, cancel, refresh }: F
                 />
             </Stack>
         ) : (
-            <FormControlLabel control={<Checkbox />} label={units && `${units.unitLabel} (${units.unitCode})`} />
+            <FormControlLabel control={<Checkbox checked={selected} />} label={units && `${units.unitLabel} (${units.unitCode})`} onClick={handleClick} />
         )}
         <Stack direction="row">
             {edit ? (
