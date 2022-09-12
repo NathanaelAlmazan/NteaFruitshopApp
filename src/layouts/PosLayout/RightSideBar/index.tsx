@@ -1,31 +1,26 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import IconButton from '@mui/material/IconButton'
-import ButtonBase from '@mui/material/ButtonBase'
 import Typography from '@mui/material/Typography'
-import ListItem from '@mui/material/ListItem'
-import ListItemText from '@mui/material/ListItemText'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import Avatar from '@mui/material/Avatar'
 import { AnimatePresence, motion } from 'framer-motion'
 import { styled, useTheme } from '@mui/material/styles'
-
+// project components
+import CartItemCard from "./CartItem"
+import CheckOutCard from './CheckOutCard'
+import PaymentCard from './PaymentCard'
 // Icons
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-
 // Redux
-import { useAppSelector, useAppDispatch } from "../../../custom-hooks"
+import { useAppSelector, useAppDispatch, useMutation } from "../../../custom-hooks"
 import { addQuantity, reduceQuantity, removeAll } from "../../../redux/slice/cart"
+// types
+import { CustomerOrder } from '../../../pages/PointOfSale'
 
 const drawerWidth = 450;
 
@@ -38,34 +33,61 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'space-between',
 }));
 
-const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp: (prop) => prop !== 'error' })<{
-    error?: boolean;
-}>(({ theme, error }) => ({
-    cursor: 'pointer', borderRadius: '8px',
-    width: '34px', height: '34px', fontSize: '1.2rem',
-    background: error ? theme.palette.error.main : theme.palette.secondary.main,
-    color: theme.palette.primary.contrastText,
-    '&:hover': {
-        background: error ? theme.palette.error.dark : theme.palette.secondary.dark,
-        color: theme.palette.primary.contrastText
-    }
-}));
-
 
 interface RightSideBarProps {
     open: boolean;
     handleDrawerClose: () => void;
 }
 
+export type PaymentType = "gcash" | "cash"
+
 export default function RightSideBar({ open, handleDrawerClose }: RightSideBarProps) {
   const theme = useTheme()
   const { cart } = useAppSelector((state) => state)
   const dispatch = useAppDispatch()
   const matches = useMediaQuery(theme.breakpoints.up('lg'))
+  const { insert, data, error } = useMutation<CustomerOrder>()
+  const [paymentType, setPaymentType] = useState<PaymentType>("cash")
+  const [loading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    dispatch(removeAll())
+    setLoading(false)
+  }, [data])
 
   const handleReduceQuantity = (id: string) => dispatch(reduceQuantity(id))
   const handleAddQuantity = (id: string) => dispatch(addQuantity(id))
   const handleRemoveAll = () => dispatch(removeAll())
+
+  const handlePaymentTypeChange = (type: PaymentType) => setPaymentType(type)
+
+  const handleSubmitOrder = (account: string) => {
+    setLoading(true)
+    if (paymentType === "cash") {
+        const formData = {
+            totalAmount: cart.totalPrice,
+            paymentType: paymentType.toUpperCase(),
+            orderItems: cart.items.map(item => ({
+                productCode: item.product.productCode,
+                quantity: item.quantity
+            }))
+        }
+
+        insert("/order", JSON.stringify(formData));
+    } else {
+        const formData = {
+            totalAmount: cart.totalPrice,
+            paymentType: paymentType.toUpperCase(),
+            transactionId: account,
+            orderItems: cart.items.map(item => ({
+                productCode: item.product.productCode,
+                quantity: item.quantity
+            }))
+        }
+
+        insert("/order", JSON.stringify(formData));
+    }
+  }
 
   return (
     <Drawer
@@ -97,9 +119,13 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
 
             </Stack>
         </DrawerHeader>
+        
         <Divider />
+
+        {/* POS Cart */}
+
         <List sx={{ 
-            maxHeight: "calc(100% - 250px)",
+            maxHeight: "calc(100% - 390px)",
             overflowX: "hidden",
             overflowY: "auto",
             "::-webkit-scrollbar": {
@@ -121,6 +147,7 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
             }
          }}>
             <AnimatePresence>
+                
                 {cart.items.length === 0 && (
                     <motion.div
                         key="empty-cart"
@@ -130,10 +157,16 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
                         layout    
                     >
                         <Stack justifyContent="center" alignItems="center">
-                            <Avatar variant="rounded" alt="empty-cart" src="https://res.cloudinary.com/ddpqji6uq/image/upload/v1661948271/graphql_images/empty-cart_c0zya5.png" sx={{ width: 330, height: 280 }} />
+                            <Avatar 
+                                variant="rounded" 
+                                alt="empty-cart" 
+                                src="https://res.cloudinary.com/ddpqji6uq/image/upload/v1661948271/graphql_images/empty-cart_c0zya5.png" 
+                                sx={{ width: 330, height: 280 }} 
+                            />
                         </Stack>
                     </motion.div>
                 )}
+
                 {cart.items.map((item) => (
                     <motion.div
                         key={item.product.productCode}
@@ -142,60 +175,43 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
                         exit={{ x: 150, opacity: 0, transition:{ delay: 0.3 } }}     
                         layout         
                     >
-                        <ListItem alignItems="center">
-                            <ListItemAvatar>
-                                <Avatar variant="rounded" alt={item.product.productName} src={item.product.productImage} />
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={item.product.productName}
-                                secondary={
-                                    <Typography
-                                        sx={{ display: 'inline' }}
-                                        component="span"
-                                        variant="body2"
-                                        color="text.primary"
-                                    >
-                                            {`₱ ${(item.quantity * (item.product.unitPrice - item.product.discountedPrice)).toFixed(2)}`}
-                                    </Typography>
-                                }
-                            />
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                                <ButtonBase onClick={() => handleReduceQuantity(item.product.productCode)} sx={{ borderRadius: '12px' }}>
-                                    <HeaderAvatarStyle error={item.quantity === 1} variant="rounded">
-                                        {item.quantity > 1 ? <RemoveIcon /> : <DeleteOutlineOutlinedIcon />}
-                                    </HeaderAvatarStyle>
-                                </ButtonBase>
-                                <Typography
-                                    component="span"
-                                    variant="subtitle2"
-                                >
-                                        {`${item.quantity} ${item.product.unitTypeCode}`}
-                                </Typography>
-                                <ButtonBase onClick={() => handleAddQuantity(item.product.productCode)} sx={{ borderRadius: '12px' }}>
-                                    <HeaderAvatarStyle variant="rounded">
-                                        <AddIcon />
-                                    </HeaderAvatarStyle>
-                                </ButtonBase>
-                            </Stack>
-                        </ListItem>
+                       <CartItemCard 
+                            item={item}
+                            addQuantity={() => handleAddQuantity(item.product.productCode)}
+                            reduceQuantity={() => handleReduceQuantity(item.product.productCode)}
+                       />
                     </motion.div>
                 ))}
+
             </AnimatePresence>
         </List>
-        <Stack justifyContent="center" alignItems="end" spacing={3} sx={{ position: "absolute", bottom: 0, right: 0, p: 2, width: "100%" }}>
-            <Card sx={{ width: "100%" }}>
-                <CardContent>
-                    <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                        Amount Due
-                    </Typography>
-                    <Typography variant="h5" component="div" sx={{ color: theme.palette.success.dark }}>
-                        {`₱ ${cart.totalPrice.toFixed(2)}`}
-                    </Typography>
-                </CardContent>
-            </Card>
-            <Button variant="contained" size="large" fullWidth>
-                Checkout Order
-            </Button>
+
+         {/* POS Payment */}
+
+        <Stack 
+            justifyContent="center" 
+            alignItems="end" spacing={3} 
+            sx={{ 
+                position: "absolute", 
+                bottom: 0, 
+                right: 0, 
+                width: "100%",
+                p: 2 
+            }}
+        >
+            <CheckOutCard 
+                totalPrice={cart.totalPrice} 
+                type={paymentType} 
+                changeType={handlePaymentTypeChange} 
+            />
+
+            <PaymentCard 
+                type={paymentType}
+                totalPrice={cart.totalPrice}
+                checkoutOrder={handleSubmitOrder}
+                loading={loading}
+                error={error ? error.errors[0] : null}
+            />
         </Stack>
     </Drawer>
   )

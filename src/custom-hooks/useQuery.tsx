@@ -2,7 +2,8 @@ import React from 'react';
 import axios, { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const baseURL = "https://ntea.herokuapp.com/api"
+// const baseURL = "https://ntea.herokuapp.com/api"
+const baseURL = "http://localhost:8080/api"
 
 export default function useQuery<R>(url: string) {
     const navigate = useNavigate();

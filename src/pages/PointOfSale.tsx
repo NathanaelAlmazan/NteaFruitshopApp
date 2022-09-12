@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
+// mui
 import Typography from '@mui/material/Typography'
-
 import ProductList from "../sections/pos/ProductList"
 import CategoryList from "../sections/pos/CategoryList"
+// project components
 import { LoadingOverlay } from '../components/SuspenseLoader'
-
 import { useQuery, useAppDispatch } from "../custom-hooks"
 import { upsert } from "../redux/slice/cart"
 
@@ -95,4 +95,19 @@ export interface Category {
 export interface CartItem {
   product: Product,
   quantity: number
+}
+
+export interface CustomerOrder {
+  orderId: number
+  totalAmount: number
+  paymentType: "CASH" | "GCASH"
+  transactionId: string | null
+  orderItems: CustomerOrderItem[]
+}
+
+export interface CustomerOrderItem {
+  orderId: number
+  productCode: string
+  quantity: number
+  product: Product
 }
