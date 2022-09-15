@@ -8,6 +8,7 @@ import ButtonBase from '@mui/material/ButtonBase'
 import Typography from '@mui/material/Typography'
 import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
+import { constantCase } from 'change-case'
 // icons
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -43,7 +44,7 @@ export default function CartItemCard({ item , addQuantity, reduceQuantity }: { i
                     variant="body2"
                     color="text.primary"
                 >
-                        {`₱ ${(item.quantity * (item.product.unitPrice - item.product.discountedPrice)).toFixed(2)}`}
+                        {`₱ ${(item.quantity * (item.unitPrice - item.product.discountedPrice)).toFixed(2)}`}
                 </Typography>
             }
         />
@@ -57,7 +58,7 @@ export default function CartItemCard({ item , addQuantity, reduceQuantity }: { i
                 component="span"
                 variant="subtitle2"
             >
-                    {`${item.quantity} ${item.product.unitTypeCode}`}
+                    {`${item.quantity} ${constantCase(item.unitType)}`}
             </Typography>
             <ButtonBase onClick={() => addQuantity()} sx={{ borderRadius: '12px' }}>
                 <HeaderAvatarStyle variant="rounded">

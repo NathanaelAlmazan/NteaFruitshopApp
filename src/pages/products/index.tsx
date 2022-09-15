@@ -17,7 +17,7 @@ import { useQuery, useMutation } from "../../custom-hooks"
 import { Product } from "../PointOfSale"
 
 export default function Products() {
-  const { data: products, loading, refetchData } = useQuery<Product[]>("/products?additionalFields=category")
+  const { data: products, loading, refetchData } = useQuery<Product[]>("/products?additionalFields=category,prices")
   const { remove, error: deleteError } = useMutation<Product>()
   const navigate = useNavigate()
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
@@ -42,23 +42,22 @@ export default function Products() {
       setFilteredProducts(
         products.filter(c => 
           (selectedCategory.includes(c.categoryId) || selectedCategory.length === 0) && 
-          (selectedUnits.includes(c.unitTypeCode) || selectedUnits.length === 0)
+          (c.unitPrices.filter(x => selectedUnits.includes(x.unitType) && x.unitPrice > 0).length !== 0 || 
+          selectedUnits.length === 0)
         ).sort((a, b) => {
           switch (sortOption) {
             case "featured": 
               return b.discountedPrice - a.discountedPrice
             case "priceDesc":
-              return b.unitPrice - a.unitPrice
+              return b.unitPrices.find(u => u.unitType === "rg").unitPrice - a.unitPrices.find(u => u.unitType === "rg").unitPrice
             case "priceAsc":
-              return a.unitPrice - b.unitPrice
+              return a.unitPrices.find(u => u.unitType === "rg").unitPrice - b.unitPrices.find(u => u.unitType === "rg").unitPrice
             default:
               return a.productCode.localeCompare(b.productCode)
           }
         })
       )
   }, [selectedCategory, selectedUnits, sortOption, products])
-
-  const handleSelectProduct = (item: Product) => navigate(`/admin/products/edit/${item.productCode}`)
 
   const handleCreateProduct = () => navigate("/admin/products/create")
 
@@ -121,7 +120,7 @@ export default function Products() {
 
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ pb: 5 }}>
       <HeaderButton 
         title="Products"
         buttonText="Add Product"
@@ -145,7 +144,6 @@ export default function Products() {
 
       <ProductList 
         products={filteredProducts} 
-        selectProduct={handleSelectProduct}
         deleteProduct={handleDeleteConfirm}
         edit 
       />

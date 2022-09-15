@@ -16,7 +16,7 @@ import { UnitType, Category, Product } from "../PointOfSale"
 
 export default function EditProductPage() {
   const { code } = useParams()
-  const { data: product, loading: pLoading } = useQuery<Product>(`/products/${code}`)
+  const { data: product, loading: pLoading } = useQuery<Product>(`/products/${code}?additionalFields=prices`)
   const { data: categories, loading: cLoading } = useQuery<Category[]>("/category")
   const { data: units, loading: uLoading } = useQuery<UnitType[]>("/units")
   const [image, setImage] = useState<File | null>(null)

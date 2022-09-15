@@ -134,7 +134,7 @@ export default function FilterCategControl({ selected, category, create, cancel,
                 </Tooltip>
             ) : (
                 <Tooltip title="Edit">
-                    <IconButton onClick={() => setEdit(true)}>
+                    <IconButton color="info" onClick={() => setEdit(true)}>
                         <ModeEditOutlinedIcon />
                     </IconButton>
                 </Tooltip>

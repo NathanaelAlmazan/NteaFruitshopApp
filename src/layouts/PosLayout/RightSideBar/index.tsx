@@ -14,6 +14,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import CartItemCard from "./CartItem"
 import CheckOutCard from './CheckOutCard'
 import PaymentCard from './PaymentCard'
+import AlertSnackbar from '../../../components/AlertSnackbar'
 // Icons
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 // Redux
@@ -49,44 +50,41 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
   const { insert, data, error } = useMutation<CustomerOrder>()
   const [paymentType, setPaymentType] = useState<PaymentType>("cash")
   const [loading, setLoading] = useState<boolean>(false)
+  const [success, setSuccess] = useState<boolean>(false)
 
   useEffect(() => {
-    dispatch(removeAll())
-    setLoading(false)
+    if (data) {
+        dispatch(removeAll())
+        setLoading(false)
+    }
   }, [data])
 
-  const handleReduceQuantity = (id: string) => dispatch(reduceQuantity(id))
-  const handleAddQuantity = (id: string) => dispatch(addQuantity(id))
+  useEffect(() => {
+    if (error) setLoading(false)
+  }, [error])
+
+  const handleReduceQuantity = (code: string, type: string) => dispatch(reduceQuantity({ code, type }))
+  const handleAddQuantity = (code: string, type: string) => dispatch(addQuantity({ code, type }))
   const handleRemoveAll = () => dispatch(removeAll())
 
   const handlePaymentTypeChange = (type: PaymentType) => setPaymentType(type)
 
-  const handleSubmitOrder = (account: string) => {
+  const handleSubmitOrder = (account: string, amount: number) => {
     setLoading(true)
-    if (paymentType === "cash") {
-        const formData = {
-            totalAmount: cart.totalPrice,
-            paymentType: paymentType.toUpperCase(),
-            orderItems: cart.items.map(item => ({
-                productCode: item.product.productCode,
-                quantity: item.quantity
-            }))
-        }
-
-        insert("/order", JSON.stringify(formData));
-    } else {
-        const formData = {
-            totalAmount: cart.totalPrice,
-            paymentType: paymentType.toUpperCase(),
-            transactionId: account,
-            orderItems: cart.items.map(item => ({
-                productCode: item.product.productCode,
-                quantity: item.quantity
-            }))
-        }
-
-        insert("/order", JSON.stringify(formData));
+    const formData = {
+        totalAmount: cart.totalPrice,
+        paymentType: paymentType.toUpperCase(),
+        paidAmount: paymentType === "cash" ? amount : null,
+        transactionId: paymentType === "gcash" ? account : null,
+        orderItems: cart.items.map(item => ({
+            productCode: item.product.productCode,
+            unitCode: item.unitType,
+            quantity: item.quantity
+        }))
     }
+
+    insert("/order", JSON.stringify(formData));
+    setSuccess(true)
   }
 
   return (
@@ -169,7 +167,7 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
 
                 {cart.items.map((item) => (
                     <motion.div
-                        key={item.product.productCode}
+                        key={`${item.product.productCode}:${item.unitType}`}
                         initial={{ x: -150, opacity: 0 }}
                         animate={{ x: 0, opacity: 1, transition:{ delay: 0.3, type: "spring" } }}
                         exit={{ x: 150, opacity: 0, transition:{ delay: 0.3 } }}     
@@ -177,8 +175,8 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
                     >
                        <CartItemCard 
                             item={item}
-                            addQuantity={() => handleAddQuantity(item.product.productCode)}
-                            reduceQuantity={() => handleReduceQuantity(item.product.productCode)}
+                            addQuantity={() => handleAddQuantity(item.product.productCode, item.unitType)}
+                            reduceQuantity={() => handleReduceQuantity(item.product.productCode, item.unitType)}
                        />
                     </motion.div>
                 ))}
@@ -213,6 +211,14 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
                 error={error ? error.errors[0] : null}
             />
         </Stack>
+
+        {data && (
+            <AlertSnackbar 
+                open={success}
+                message={`Order with ID of ${data && data.orderId} was successfully created.`}
+                handleClose={() => setSuccess(false)}
+            />
+        )}
     </Drawer>
   )
 }

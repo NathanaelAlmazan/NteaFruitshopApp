@@ -16,13 +16,17 @@ interface PaymentCardProps {
     totalPrice: number
     error: string | null
     loading: boolean
-    checkoutOrder: (account: string) => void
+    checkoutOrder: (account: string, amount: number) => void
 }
 
 export default function PaymentCard({ type, totalPrice, error, loading, checkoutOrder }: PaymentCardProps) {
   const [amount, setAmount] = useState<number>(0)
   const [change, setChange] = useState<number>(0)
   const [account, setAccount] = useState<string>("")
+
+  useEffect(() => {
+    if (totalPrice === 0) setAmount(0)
+  }, [totalPrice])
 
   useEffect(() => {
     setChange(amount - totalPrice)
@@ -37,8 +41,13 @@ export default function PaymentCard({ type, totalPrice, error, loading, checkout
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if ((type === "cash" && amount >= totalPrice) || type === "gcash") 
-        checkoutOrder(account.replace(/\s/g, ''))
+    if ((type === "cash" && amount >= totalPrice) || type === "gcash") {
+        checkoutOrder(account.replace(/\s/g, ''), amount)
+        setAmount(0)
+        setChange(0)
+        setAccount("")
+    }
+        
   }
 
   return (
@@ -58,7 +67,7 @@ export default function PaymentCard({ type, totalPrice, error, loading, checkout
                                     type="number"
                                     name="amount"
                                     label="Paid Amount"
-                                    value={amount}
+                                    value={isNaN(amount) ? "" : amount}
                                     onChange={handleAmountChange}
                                     fullWidth
                                     required
@@ -91,7 +100,7 @@ export default function PaymentCard({ type, totalPrice, error, loading, checkout
                             <Stack direction="row">
                                 <TextField 
                                     name="account"
-                                    label="Transaction ID"
+                                    label="Reference Number"
                                     value={account}
                                     onChange={handleAccountChange}
                                     error={error !== null}

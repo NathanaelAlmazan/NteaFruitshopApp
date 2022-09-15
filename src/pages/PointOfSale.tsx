@@ -17,7 +17,7 @@ const allCategory: Category = {
 } 
 
 export default function PointOfSale() {
-  const { data: products, error, loading } = useQuery<Product[]>("/products?additionalFields=category")
+  const { data: products, error, loading } = useQuery<Product[]>("/products?additionalFields=category,prices")
   const dispatch = useAppDispatch()
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -46,8 +46,14 @@ export default function PointOfSale() {
 
   const handleChangeCategory = (category: Category) => setSelectedCategory(category)
 
-  const handleSelectProduct = (item: Product) => {
-    const cartItem: CartItem = { product: item, quantity: 1 }
+  const handleSelectProduct = (item: Product, type: string) => {
+    const cartItem: CartItem = { 
+      product: item, 
+      quantity: 1, 
+      unitType: type,
+      unitPrice: item.unitPrices.find(p => p.unitType === type).unitPrice 
+    };
+
     dispatch(upsert(cartItem))
   }
 
@@ -66,12 +72,16 @@ export default function PointOfSale() {
   )
 }
 
+export interface UnitPrices {
+  unitType: string,
+  unitPrice: number,
+  productCode: string,
+}
+
 export interface Product {
   productCode: string,
   productName: string,
-  unitTypeCode: string,
-  unitType: UnitType | null,
-  unitPrice: number,
+  unitPrices: UnitPrices[],
   discountedPrice: number | null,
   productImage: string,
   isActive: boolean,
@@ -94,20 +104,25 @@ export interface Category {
 
 export interface CartItem {
   product: Product,
-  quantity: number
+  unitPrice: number,
+  quantity: number,
+  unitType: string
 }
 
 export interface CustomerOrder {
   orderId: number
   totalAmount: number
+  paidAmount: number
   paymentType: "CASH" | "GCASH"
   transactionId: string | null
   orderItems: CustomerOrderItem[]
+  timestamp: Date
 }
 
 export interface CustomerOrderItem {
   orderId: number
   productCode: string
+  unitCode: string
   quantity: number
   product: Product
 }

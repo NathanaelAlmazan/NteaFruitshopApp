@@ -15,6 +15,8 @@ const EditProduct = React.lazy(() => import("./pages/products/edit"))
 
 const InventoryPage = React.lazy(() => import("./pages/inventory"))
 
+const SalesPage = React.lazy(() => import("./pages/sales"))
+
 export default function Router() {
     return useRoutes([
         {
@@ -32,6 +34,7 @@ export default function Router() {
                 { path: 'products/create', element: <SuspenseLoader children={<CreateProduct />} /> },
                 { path: 'products/edit/:code', element: <SuspenseLoader children={<EditProduct />} /> },
                 { path: 'inventory', element: <SuspenseLoader children={<InventoryPage />} /> },
+                { path: 'sales', element: <SuspenseLoader children={<SalesPage />} /> },
             ]
         },
         {

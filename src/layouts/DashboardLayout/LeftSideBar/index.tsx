@@ -7,11 +7,9 @@ import Divider from '@mui/material/Divider'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import PointOfSaleOutlinedIcon from '@mui/icons-material/PointOfSaleOutlined'
-import SellIcon from '@mui/icons-material/Sell'
-import Inventory2Icon from '@mui/icons-material/Inventory2'
 import { styled, alpha } from '@mui/material/styles'
 import Logo from "../../../components/Logo"
+import appPaths from "../../AppPaths"
 
 const drawerWidth = 280;
 
@@ -47,24 +45,6 @@ const ListItemIconStyle = styled(ListItemIcon)({
     alignItems: 'center',
     justifyContent: 'center',
 });
-
-const appPaths = [
-    {
-        title: "Point of Sale",
-        pathname: "/app/pos",
-        icon: <PointOfSaleOutlinedIcon />
-    },
-    {
-        title: "Products",
-        pathname: "/admin/products",
-        icon: <SellIcon />
-    },
-    {
-        title: "Inventory",
-        pathname: "/admin/inventory",
-        icon: <Inventory2Icon />
-    }
-]
 
 interface LeftSideBarProps {
     open: boolean;

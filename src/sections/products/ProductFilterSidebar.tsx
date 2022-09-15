@@ -156,7 +156,7 @@ export default function ShopFilterSidebar({ isOpenFilter, selectedCategories, se
                   {addUnits && (
                     <FilterUnitsControl cancel={() => setAddUnits(false)} refresh={refreshUnits} create />
                   )}
-                  {units && units.filter(u => u.unitCode !== "pcs").map((unit, i) => (
+                  {units && units.filter(u => u.unitCode !== "rg").map((unit, i) => (
                     <motion.div
                       key={unit.unitCode}
                       initial={{ x: -150, opacity: 0 }}
