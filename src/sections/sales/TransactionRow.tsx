@@ -58,7 +58,6 @@ export default function TransactionRow({ order }: { order: CustomerOrder }) {
                     ))}
                 </AvatarGroup>
             </TableCell>
-
             <TableCell align="right">
                 <OrderMoreMenu collapsed={open} handleViewDetails={() => setOpen(!open)} />
             </TableCell>
