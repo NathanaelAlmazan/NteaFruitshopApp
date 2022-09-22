@@ -16,10 +16,10 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 // project components
 import ItemListHead from "./ItemListHead"
-import ItemListToolbar from "./ItemsListToolbar"
-import SearchNotFound from '../../components/SearchNotFound';
+import ItemListToolbar from "../ListToolbar"
+import SearchNotFound from '../../../components/SearchNotFound';
 // types 
-import { InventoryItem } from '../../pages/inventory';
+import { InventoryItem } from '../../../pages/inventory';
 
 const TABLE_HEAD = [
     { id: 'itemName', label: 'Item Name', alignRight: false },
@@ -138,6 +138,7 @@ export default function ItemTable({ itemList, onAddClick, onEditClick, onDeleteC
     return (
         <>
             <ItemListToolbar 
+                label="Search item..."
                 numSelected={selected.length}
                 filterName={filterName}
                 onFilterName={handleFilterName} 

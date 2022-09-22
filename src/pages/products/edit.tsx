@@ -8,11 +8,12 @@ import Grid from '@mui/material/Grid'
 import { Header } from "../../components/PageHeaders"
 import { LoadingOverlay } from '../../components/SuspenseLoader'
 import ProductImage from '../../sections/products/ProductImage'
-import ProductForm from '../../sections/products/ProductForm'
 // hooks
 import { useQuery } from '../../custom-hooks'
 // types
 import { UnitType, Category, Product } from "../PointOfSale"
+
+const ProductForm = React.lazy(() => import('../../sections/products/ProductForm'))
 
 export default function EditProductPage() {
   const { code } = useParams()

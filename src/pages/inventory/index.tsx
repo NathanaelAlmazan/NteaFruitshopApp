@@ -6,10 +6,12 @@ import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
 import AppBar from "@mui/material/AppBar"
 import Card from "@mui/material/Card"
-import { styled, useTheme } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles'
 // project components
 import { Header } from "../../components/PageHeaders"
-import ItemTab from "../../sections/inventory/ItemTab"
+
+const ItemTab = React.lazy(() => import("../../sections/inventory/ItemTab"))
+const PurchaseTab = React.lazy(() => import("../../sections/inventory/PurchaseTab"))
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -114,7 +116,7 @@ export default function InventoryPage() {
           <ItemTab />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          Item Two
+          <PurchaseTab />
         </TabPanel>
         <TabPanel value={value} index={2}>
           Item Three

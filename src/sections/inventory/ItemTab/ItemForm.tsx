@@ -16,8 +16,8 @@ import { Formik } from "formik";
 // icons
 import CloseIcon from '@mui/icons-material/Close';
 // project components
-import { useMutation } from '../../custom-hooks'
-import { InventoryItem } from "../../pages/inventory"
+import { useMutation } from '../../../custom-hooks'
+import { InventoryItem } from "../../../pages/inventory"
 
 interface ItemFormProps {
     open: boolean
@@ -105,7 +105,7 @@ export default function ItemForm({ open, edit, handleClose, onReload }: ItemForm
             }}
         >
             {({ errors, handleBlur, handleChange, handleSubmit, setFieldValue, isSubmitting, touched, values }) => (
-                <Stack component="form" spacing={2} onSubmit={handleSubmit} sx={{ m: 5 }} noValidate>
+                <Stack component="form" spacing={3} onSubmit={handleSubmit} sx={{ m: 5 }} noValidate>
                     <TextField 
                         name="itemName"
                         label="Item Name"

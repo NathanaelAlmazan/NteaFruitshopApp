@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 // project components
-import { LoadingOverlay } from '../../components/SuspenseLoader'
-import ItemTable from "../../sections/inventory/ItemTable"
-import ItemForm from "../../sections/inventory/ItemForm"
+import { LoadingOverlay } from '../../../components/SuspenseLoader'
+import ItemForm from "./ItemForm"
 import DeleteConfirmDialog from "./ItemDeleteConfirm"
 // hooks
-import { useQuery } from "../../custom-hooks"
+import { useQuery } from "../../../custom-hooks"
 // types
-import { InventoryItem } from '../../pages/inventory'
+import { InventoryItem } from '../../../pages/inventory'
 
-
+const ItemTable = React.lazy(() => import("./ItemTable"))
 
 export default function ItemTab() {
     const { data, loading, refetchData } = useQuery<InventoryItem[]>("/ingredients")

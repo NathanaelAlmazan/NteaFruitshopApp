@@ -7,11 +7,12 @@ import Grid from '@mui/material/Grid'
 import { Header } from "../../components/PageHeaders"
 import { LoadingOverlay } from '../../components/SuspenseLoader'
 import ProductImage from '../../sections/products/ProductImage'
-import ProductForm from '../../sections/products/ProductForm'
 // hooks
 import { useQuery } from '../../custom-hooks'
 // types
 import { UnitType, Category } from "../PointOfSale"
+
+const ProductForm = React.lazy(() => import('../../sections/products/ProductForm'))
 
 export default function CreateProductPage() {
   const { data: categories, loading: cLoading } = useQuery<Category[]>("/category")
