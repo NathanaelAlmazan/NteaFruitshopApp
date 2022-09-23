@@ -47,7 +47,7 @@ export default function TransactionRow({ order }: { order: CustomerOrder }) {
                         {paymentType}
                     </Typography>
                     <Typography variant="body2" noWrap>
-                        {paymentType === "CASH" ? `Paid ₱ ${order.paidAmount.toFixed(2)}` : `Ref. ${transactionId}`}
+                        {paymentType === "CASH" ? "" : `Ref. ${transactionId}`}
                     </Typography>
                 </Stack>
             </TableCell>

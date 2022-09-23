@@ -16,8 +16,8 @@ import { Formik } from "formik";
 // icons
 import CloseIcon from '@mui/icons-material/Close';
 // project components
-import { useMutation } from '../../../custom-hooks'
-import { InventoryItem } from "../../../pages/inventory"
+import { useMutation } from '../../custom-hooks'
+import { InventoryItem } from "../../pages/inventory"
 
 interface ItemFormProps {
     open: boolean

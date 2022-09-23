@@ -36,9 +36,9 @@ ItemListToolbar.propTypes = {
   onFilterName: PropTypes.func,
 };
 
-interface ItemListToolbar { label?: string, numSelected: number, filterName: string, onFilterName: (e: React.ChangeEvent<HTMLInputElement>) => void, onAddClick: () => void }
+interface ItemListToolbar { label?: string, buttonLabel?: string, numSelected: number, filterName: string, onFilterName: (e: React.ChangeEvent<HTMLInputElement>) => void, onAddClick: () => void }
 
-export default function ItemListToolbar({ label, numSelected, filterName, onFilterName, onAddClick }: ItemListToolbar) {
+export default function ItemListToolbar({ label, buttonLabel, numSelected, filterName, onFilterName, onAddClick }: ItemListToolbar) {
   return (
     <RootStyle>
 
@@ -66,7 +66,7 @@ export default function ItemListToolbar({ label, numSelected, filterName, onFilt
             </IconButton>
           </Tooltip>
         ) : (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={onAddClick}>Add Item</Button>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={onAddClick}>{buttonLabel}</Button>
         )}
     </RootStyle>
   );

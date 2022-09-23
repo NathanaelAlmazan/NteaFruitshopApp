@@ -8,14 +8,12 @@ import { SuspenseLoader } from './components/SuspenseLoader'
 //Pages
 const PointOfSale = React.lazy(() => import("./pages/PointOfSale"))
 const OfflinePage = React.lazy(() => import("./pages/Offline"))
-
 const Products = React.lazy(() => import("./pages/products"))
 const CreateProduct = React.lazy(() => import("./pages/products/create"))
 const EditProduct = React.lazy(() => import("./pages/products/edit"))
-
 const InventoryPage = React.lazy(() => import("./pages/inventory"))
-
 const SalesPage = React.lazy(() => import("./pages/sales"))
+const PurchasePage = React.lazy(() => import("./pages/purchase"))
 
 export default function Router() {
     return useRoutes([
@@ -35,6 +33,7 @@ export default function Router() {
                 { path: 'products/edit/:code', element: <SuspenseLoader children={<EditProduct />} /> },
                 { path: 'inventory', element: <SuspenseLoader children={<InventoryPage />} /> },
                 { path: 'sales', element: <SuspenseLoader children={<SalesPage />} /> },
+                { path: 'purchase', element: <SuspenseLoader children={<PurchasePage />} /> },
             ]
         },
         {
