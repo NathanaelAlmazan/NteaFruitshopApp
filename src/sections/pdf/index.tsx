@@ -1,7 +1,5 @@
 import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -9,6 +7,10 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
+import { PDFViewer } from '@react-pdf/renderer';
+import InvoiceDocument from "./InvoiceDocument"
+import { useQuery } from '../../custom-hooks';
+import { CustomerOrder } from '../../pages/PointOfSale';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -19,9 +21,8 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ReceiptDialog({ open, url, handleClose }: { open: boolean, url: string, handleClose: () => void }) {
-
-  const handleSaveReceipt = () => api.downloadFromUrl(url)
+export default function InvoiceDialog({ open, id, handleClose }: { open: boolean, id: number, handleClose: () => void }) {
+  const { data } = useQuery<CustomerOrder>(`/order/${id}?additionalFields=items,product,prices`)
 
   return (
       <Dialog
@@ -41,19 +42,13 @@ export default function ReceiptDialog({ open, url, handleClose }: { open: boolea
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Receipt
+              Invoice
             </Typography>
-            <Button autoFocus color="inherit" onClick={handleSaveReceipt}>
-              Save
-            </Button>
           </Toolbar>
         </AppBar>
-        <Box 
-            component="img"
-            src={url}
-            alt="receipt"
-            sx={{ width: "100%", height: "100%", objectFit: "contain" }}
-        />
+        <PDFViewer style={{ width: '100%', height: '100%' }}>
+            {data && <InvoiceDocument invoice={data} />}
+        </PDFViewer>
       </Dialog>
   );
 }

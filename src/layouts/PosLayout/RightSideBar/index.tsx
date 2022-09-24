@@ -14,7 +14,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import CartItemCard from "./CartItem"
 import CheckOutCard from './CheckOutCard'
 import PaymentCard from './PaymentCard'
-import AlertSnackbar from '../../../components/AlertSnackbar'
+import InvoiceDialog from '../../../sections/pdf'
 // Icons
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 // Redux
@@ -22,6 +22,8 @@ import { useAppSelector, useAppDispatch, useMutation } from "../../../custom-hoo
 import { addQuantity, reduceQuantity, removeAll } from "../../../redux/slice/cart"
 // types
 import { CustomerOrder } from '../../../pages/PointOfSale'
+
+const SuccessDialog = React.lazy(() => import('../../../sections/pos/SucessDialog'))
 
 const drawerWidth = 450;
 
@@ -51,6 +53,7 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
   const [paymentType, setPaymentType] = useState<PaymentType>("cash")
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
+  const [invoice, setInvoice] = useState<boolean>(false)
 
   useEffect(() => {
     if (data) {
@@ -212,11 +215,23 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
             />
         </Stack>
 
-        {data && (
-            <AlertSnackbar 
+        {Boolean(data && success) && (
+            <SuccessDialog 
                 open={success}
-                message={`Order with ID of ${data && data.orderId} was successfully created.`}
+                id={data && data.orderId}
                 handleClose={() => setSuccess(false)}
+                handleInvoice={() => setInvoice(true)}
+            />
+        )}
+
+        {Boolean(data && invoice) && (
+            <InvoiceDialog 
+                open={invoice}
+                id={data && data.orderId}
+                handleClose={() => {
+                    setInvoice(false)
+                    setSuccess(false)
+                }}
             />
         )}
     </Drawer>

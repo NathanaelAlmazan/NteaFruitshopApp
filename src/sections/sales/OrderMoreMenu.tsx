@@ -3,11 +3,12 @@ import React, { useRef, useState } from 'react';
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import ReceiptRoundedIcon from '@mui/icons-material/ReceiptRounded';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import CancelScheduleSendOutlinedIcon from '@mui/icons-material/CancelScheduleSendOutlined';
+import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 
 // ----------------------------------------------------------------------
 
-export default function OrderMoreMenu({ collapsed, handleViewDetails }: { collapsed: boolean, handleViewDetails: () => void }) {
+export default function OrderMoreMenu({ collapsed, handleViewDetails, handleViewInvoice }: { collapsed: boolean, handleViewDetails: () => void, handleViewInvoice: () => void }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -39,11 +40,23 @@ export default function OrderMoreMenu({ collapsed, handleViewDetails }: { collap
           <ListItemText primary={collapsed ? "Hide Details" : "Show Details"} primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
+        <MenuItem onClick={() => {
+          handleViewInvoice()
+          setIsOpen(false)
+          }} 
+          sx={{ color: 'text.secondary' }}
+        >
+          <ListItemIcon>
+            <ReceiptOutlinedIcon />
+          </ListItemIcon>
+          <ListItemText primary="View Invoice" primaryTypographyProps={{ variant: 'body2' }} />
+        </MenuItem>
+
         <MenuItem sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
-            <DeleteOutlineOutlinedIcon />
+            <CancelScheduleSendOutlinedIcon color="error" />
           </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="Cancel" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

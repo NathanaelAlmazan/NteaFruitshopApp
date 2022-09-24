@@ -15,12 +15,21 @@ import OrderMoreMenu from "./OrderMoreMenu"
 // types
 import { CustomerOrder } from '../../pages/PointOfSale'
 
+const InvoiceDialog = React.lazy(() => import("../pdf"))
+
 export default function TransactionRow({ order }: { order: CustomerOrder }) {
   const { orderId, paymentType, timestamp, totalAmount, orderItems, transactionId } = order;
   const orderUid = `${Array(5 - orderId.toFixed(0).length).fill(0).map(() => "0").join("")}${orderId}`
   const orderDate = new Date(timestamp).toLocaleString()
 
   const [open, setOpen] = React.useState<boolean>(false)
+  const [invoice, setInvoice] = React.useState<boolean>(false)
+  const [selected, setSelected] = React.useState<number>()
+
+  const handleViewInvoice = () => {
+    setSelected(order.orderId)
+    setInvoice(true)
+  }
 
   return (
     <>
@@ -59,7 +68,7 @@ export default function TransactionRow({ order }: { order: CustomerOrder }) {
                 </AvatarGroup>
             </TableCell>
             <TableCell align="right">
-                <OrderMoreMenu collapsed={open} handleViewDetails={() => setOpen(!open)} />
+                <OrderMoreMenu collapsed={open} handleViewDetails={() => setOpen(!open)} handleViewInvoice={handleViewInvoice} />
             </TableCell>
         </TableRow>
         <TableRow>
@@ -104,6 +113,8 @@ export default function TransactionRow({ order }: { order: CustomerOrder }) {
           </Collapse>
         </TableCell>
       </TableRow>
+
+      {selected && <InvoiceDialog open={invoice} id={selected} handleClose={() => setInvoice(false)} />}
     </>
   )
 }

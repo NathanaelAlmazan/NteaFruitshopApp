@@ -54,7 +54,10 @@
                 {
                   "html": "./src/index.html",
                   "js": "./src/renderer.ts",
-                  "name": "main_window"
+                  "name": "main_window",
+                  "preload": {
+                    "js": "./src/preload.ts"
+                  }
                 }
               ]
             }
@@ -95,6 +98,7 @@
     "@mui/lab": "^5.0.0-alpha.96",
     "@mui/material": "^5.10.2",
     "@mui/x-date-pickers": "^5.0.2",
+    "@react-pdf/renderer": "^3.0.0",
     "@reduxjs/toolkit": "^1.8.5",
     "apexcharts": "^3.35.5",
     "axios": "^0.27.2",
