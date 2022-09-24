@@ -12,13 +12,14 @@ import AvatarGroup from "@mui/material/AvatarGroup"
 import Collapse from "@mui/material/Collapse"
 import Box from "@mui/material/Box"
 import OrderMoreMenu from "./OrderMoreMenu"
+import Label from "../../components/Label"
 // types
 import { CustomerOrder } from '../../pages/PointOfSale'
 
 const InvoiceDialog = React.lazy(() => import("../pdf"))
 
-export default function TransactionRow({ order }: { order: CustomerOrder }) {
-  const { orderId, paymentType, timestamp, totalAmount, orderItems, transactionId } = order;
+export default function TransactionRow({ order, onCancel }: { order: CustomerOrder, onCancel: () => void }) {
+  const { orderId, paymentType, timestamp, totalAmount, orderItems, transactionId, cancelled } = order;
   const orderUid = `${Array(5 - orderId.toFixed(0).length).fill(0).map(() => "0").join("")}${orderId}`
   const orderDate = new Date(timestamp).toLocaleString()
 
@@ -61,6 +62,9 @@ export default function TransactionRow({ order }: { order: CustomerOrder }) {
                 </Stack>
             </TableCell>
             <TableCell align="left">
+              {!cancelled ? <Label>Fulfilled</Label> : <Label error>Cancelled</Label>}
+            </TableCell>
+            <TableCell align="left">
                 <AvatarGroup max={4}>
                     {orderItems.map(item => (
                         <Avatar key={item.productCode + item.unitCode} alt={item.productCode} src={item.product.productImage} />
@@ -68,7 +72,7 @@ export default function TransactionRow({ order }: { order: CustomerOrder }) {
                 </AvatarGroup>
             </TableCell>
             <TableCell align="right">
-                <OrderMoreMenu collapsed={open} handleViewDetails={() => setOpen(!open)} handleViewInvoice={handleViewInvoice} />
+                <OrderMoreMenu collapsed={open} cancelled={cancelled} handleViewDetails={() => setOpen(!open)} handleViewInvoice={handleViewInvoice} handleCancel={onCancel} />
             </TableCell>
         </TableRow>
         <TableRow>

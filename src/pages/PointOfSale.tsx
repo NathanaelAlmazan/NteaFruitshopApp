@@ -117,6 +117,7 @@ export interface CustomerOrder {
   transactionId: string | null
   orderItems: CustomerOrderItem[]
   timestamp: Date
+  cancelled: boolean
 }
 
 export interface CustomerOrderItem {

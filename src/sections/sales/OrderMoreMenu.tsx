@@ -8,7 +8,7 @@ import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 
 // ----------------------------------------------------------------------
 
-export default function OrderMoreMenu({ collapsed, handleViewDetails, handleViewInvoice }: { collapsed: boolean, handleViewDetails: () => void, handleViewInvoice: () => void }) {
+export default function OrderMoreMenu({ collapsed, cancelled, handleViewDetails, handleViewInvoice, handleCancel }: { collapsed: boolean, cancelled: boolean, handleViewDetails: () => void, handleViewInvoice: () => void, handleCancel: () => void }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -41,8 +41,8 @@ export default function OrderMoreMenu({ collapsed, handleViewDetails, handleView
         </MenuItem>
 
         <MenuItem onClick={() => {
-          handleViewInvoice()
-          setIsOpen(false)
+            handleViewInvoice()
+            setIsOpen(false)
           }} 
           sx={{ color: 'text.secondary' }}
         >
@@ -52,12 +52,19 @@ export default function OrderMoreMenu({ collapsed, handleViewDetails, handleView
           <ListItemText primary="View Invoice" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
-            <CancelScheduleSendOutlinedIcon color="error" />
-          </ListItemIcon>
-          <ListItemText primary="Cancel" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
+        {!cancelled && (
+          <MenuItem onClick={() => {
+              handleCancel()
+              setIsOpen(false)
+            }} 
+            sx={{ color: 'text.secondary' }}
+          >
+            <ListItemIcon>
+              <CancelScheduleSendOutlinedIcon color="error" />
+            </ListItemIcon>
+            <ListItemText primary="Cancel" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        )}
       </Menu>
     </>
   );

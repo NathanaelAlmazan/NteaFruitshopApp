@@ -15,8 +15,10 @@ import { useQuery } from "../../custom-hooks"
 import { CustomerOrder } from "../PointOfSale"
 
 export default function SalesPage() {
-  const { data, loading } = useQuery<CustomerOrder[]>("/order?additionalFields=items,product,prices")
+  const { data, loading, refetchData } = useQuery<CustomerOrder[]>("/order?additionalFields=items,product,prices")
   const theme = useTheme()
+
+  const handleRefreshTable = () => refetchData()
 
   return (
     <Container maxWidth="lg" sx={{ pb: 5 }}>
@@ -80,7 +82,7 @@ export default function SalesPage() {
                 />
             </Grid>
             <Grid item xs={12}>
-                {data && <TransactionHistory orderList={data} />}
+                {data && <TransactionHistory orderList={data} onRefresh={handleRefreshTable} />}
             </Grid>
         </Grid>
 

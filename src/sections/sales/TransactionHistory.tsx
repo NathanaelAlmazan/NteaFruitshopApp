@@ -12,6 +12,8 @@ import OrderListToolbar from "./OrderListToolbar"
 import OrderListHead from "./OrderListHead"
 import SearchNotFound from '../../components/SearchNotFound';
 import TransactionRow from "./TransactionRow"
+// hooks
+import { useMutation } from '../../custom-hooks';
 // types
 import { CustomerOrder } from '../../pages/PointOfSale'
 
@@ -20,12 +22,14 @@ const TABLE_HEAD = [
     { id: 'totalAmount', label: 'Total Amount', alignRight: false },
     { id: 'timestamp', label: 'Timestamp', alignRight: false },
     { id: 'paymentType', label: 'Payment Type', alignRight: false },
+    { id: 'cancelled', label: "Status", alignRight: false },
     { id: 'orderItems', label: "Ordered Items", alignRight: true },
     { id: '', label: '', alignRight: true },
 ];
 
 interface TransactionHistoryProps {
     orderList: CustomerOrder[]
+    onRefresh: () => void
 }
 
 function descendingComparator(a: CustomerOrder, b: CustomerOrder, orderBy: string) {
@@ -59,7 +63,8 @@ function applySortFilter(array: CustomerOrder[], orderType: 'asc' | 'desc', orde
     return stabilizedThis.map((el) => el.el);
 }
 
-export default function TransactionHistory({ orderList }: TransactionHistoryProps) {
+export default function TransactionHistory({ orderList, onRefresh }: TransactionHistoryProps) {
+  const { update, data } = useMutation<CustomerOrder>()
   const [filteredOrders, setFilteredOrders] = useState<CustomerOrder[]>(orderList)
   const [displayedOrders, setDisplayedOrders] = useState<CustomerOrder[]>([])
   const [page, setPage] = useState<number>(0)
@@ -78,6 +83,10 @@ export default function TransactionHistory({ orderList }: TransactionHistoryProp
     setEmptyRows(page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredOrders.length) : 0)
   }, [filteredOrders, page, rowsPerPage])
 
+  useEffect(() => {
+    if (data) onRefresh()
+  }, [data])
+
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, page: number) => setPage(page)
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -95,6 +104,11 @@ export default function TransactionHistory({ orderList }: TransactionHistoryProp
 
   const handleFilterByName = (event: React.ChangeEvent<HTMLInputElement>) => setFilterName(event.target.value)
 
+  const handleSetCancelled = (order: CustomerOrder) => {
+    order.cancelled = true
+    update("/order", JSON.stringify(order))
+  }
+
   return (
     <Card>
         <OrderListToolbar filterName={filterName} onFilterName={handleFilterByName} />
@@ -109,7 +123,7 @@ export default function TransactionHistory({ orderList }: TransactionHistoryProp
                 />
                 <TableBody>
                     {displayedOrders.map((row) => (
-                        <TransactionRow key={row.orderId} order={row} />
+                        <TransactionRow key={row.orderId} order={row} onCancel={() => handleSetCancelled(row)} />
                     ))}
                     {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
