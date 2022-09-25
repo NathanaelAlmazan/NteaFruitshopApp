@@ -1,10 +1,10 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { cartSlice, connectionSlice } from "../slice"
+import { cartSlice, searchSlice } from "../slice"
 
 const store = configureStore({
     reducer: combineReducers({
       cart: cartSlice,
-      connection: connectionSlice
+      search: searchSlice
     })
   });
 

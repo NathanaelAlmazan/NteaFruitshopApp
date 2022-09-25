@@ -12,13 +12,14 @@ import ProductDeleteDialog from '../../sections/products/ProductDeleteDialog'
 import CustomSnackbar from '../../components/Snackbar'
 import { LoadingOverlay } from '../../components/SuspenseLoader'
 //utils
-import { useQuery, useMutation } from "../../custom-hooks"
+import { useQuery, useMutation, useAppSelector } from "../../custom-hooks"
 // types
 import { Product } from "../PointOfSale"
 
 export default function Products() {
   const { data: products, loading, refetchData } = useQuery<Product[]>("/products?additionalFields=category,prices")
   const { remove, error: deleteError } = useMutation<Product>()
+  const { search } = useAppSelector((state) => state)
   const navigate = useNavigate()
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [sortOption, setSortOption] = useState<string>("newest")
@@ -41,9 +42,9 @@ export default function Products() {
     if (products) 
       setFilteredProducts(
         products.filter(c => 
+          c.productName.toLowerCase().includes(search.searchQuery) &&
           (selectedCategory.includes(c.categoryId) || selectedCategory.length === 0) && 
-          (c.unitPrices.filter(x => selectedUnits.includes(x.unitType) && x.unitPrice > 0).length !== 0 || 
-          selectedUnits.length === 0)
+          (c.unitPrices.filter(x => selectedUnits.includes(x.unitType) && x.unitPrice > 0).length !== 0 || selectedUnits.length === 0)
         ).sort((a, b) => {
           switch (sortOption) {
             case "featured": 
@@ -57,7 +58,7 @@ export default function Products() {
           }
         })
       )
-  }, [selectedCategory, selectedUnits, sortOption, products])
+  }, [selectedCategory, selectedUnits, sortOption, products, search])
 
   const handleCreateProduct = () => navigate("/admin/products/create")
 

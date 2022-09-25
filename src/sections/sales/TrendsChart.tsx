@@ -39,9 +39,15 @@ TrendsChart.propTypes = {
   chartData: PropTypes.array,
 };
 
-interface TrendsChartProps { title: string, subheader?: string, chartColors: string[], chartData: { label: string, value: number }[] }
+interface TrendsChartProps { 
+  title: string, 
+  subheader?: string, 
+  chartColors: string[], 
+  chartData: { label: string, value: number }[] 
+  productNames: { code: string, name: string }[] 
+}
 
-export default function TrendsChart({ title, subheader, chartColors, chartData, ...other }: TrendsChartProps) {
+export default function TrendsChart({ title, subheader, chartColors, chartData, productNames, ...other }: TrendsChartProps) {
   const theme = useTheme();
 
   const chartLabels = chartData.map((i) => i.label);
@@ -59,7 +65,7 @@ export default function TrendsChart({ title, subheader, chartColors, chartData, 
       y: {
         formatter: (seriesName: string) => `${seriesName} sold`,
         title: {
-          formatter: (seriesName: string) => `${seriesName}`,
+          formatter: (seriesName: string) => `${productNames.find(p => p.code === seriesName).name}`,
         },
       },
     },

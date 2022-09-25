@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
 import { Avatar, Box, ButtonBase, Card, Grid, InputAdornment, OutlinedInput, Popper } from '@mui/material';
-
 // third-party
 import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
-
 // project imports
 import Transitions from '../../../components/Transitions';
-
+import { useAppDispatch } from "../../../custom-hooks"
+import { search } from "../../../redux/slice/search"
 // assets
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
@@ -119,7 +117,12 @@ const MobileSearch = ({ value, setValue, popupState }: MobileSearchProps) => {
 
 const SearchSection = () => {
     const theme = useTheme();
-    const [value, setValue] = useState('');
+    const dispatch = useAppDispatch();
+    const [value, setValue] = useState<string>('');
+
+    React.useEffect(() => {
+        dispatch(search(value))
+    }, [value])
 
     return (
         <>

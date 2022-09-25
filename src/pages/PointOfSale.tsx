@@ -5,7 +5,7 @@ import ProductList from "../sections/pos/ProductList"
 import CategoryList from "../sections/pos/CategoryList"
 // project components
 import { LoadingOverlay } from '../components/SuspenseLoader'
-import { useQuery, useAppDispatch } from "../custom-hooks"
+import { useQuery, useAppDispatch, useAppSelector } from "../custom-hooks"
 import { upsert } from "../redux/slice/cart"
 
 const allCategory: Category = {
@@ -19,6 +19,7 @@ const allCategory: Category = {
 export default function PointOfSale() {
   const { data: products, error, loading } = useQuery<Product[]>("/products?additionalFields=category,prices")
   const dispatch = useAppDispatch()
+  const { search } = useAppSelector((state) => state)
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<Category>(allCategory)
@@ -27,10 +28,10 @@ export default function PointOfSale() {
 
   useEffect(() => {
     if (products) {
-      if (selectedCategory.categoryId === 0) setFilteredProducts(products)
-      else setFilteredProducts(products.filter(product => product.categoryId === selectedCategory.categoryId))
+      if (selectedCategory.categoryId === 0) setFilteredProducts(products.filter(p => p.productName.toLowerCase().includes(search.searchQuery)))
+      else setFilteredProducts(products.filter(product => product.categoryId === selectedCategory.categoryId && product.productName.toLowerCase().includes(search.searchQuery)))
     }
-  }, [products, selectedCategory])
+  }, [products, selectedCategory, search])
 
   useEffect(() => {
     if (products) {

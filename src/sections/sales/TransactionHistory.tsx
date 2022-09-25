@@ -63,8 +63,16 @@ function applySortFilter(array: CustomerOrder[], orderType: 'asc' | 'desc', orde
     return stabilizedThis.map((el) => el.el);
 }
 
+const FILTER_BY_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'cash', label: 'Cash' },
+  { value: 'gcash', label: 'GCash' },
+  { value: 'cancelled', label: 'Cancelled' }
+];
+
 export default function TransactionHistory({ orderList, onRefresh }: TransactionHistoryProps) {
   const { update, data } = useMutation<CustomerOrder>()
+  const [filter, setFilter] = useState<string>("all")
   const [filteredOrders, setFilteredOrders] = useState<CustomerOrder[]>(orderList)
   const [displayedOrders, setDisplayedOrders] = useState<CustomerOrder[]>([])
   const [page, setPage] = useState<number>(0)
@@ -75,8 +83,24 @@ export default function TransactionHistory({ orderList, onRefresh }: Transaction
   const [emptyRows, setEmptyRows] = useState<number>(0);
 
   useEffect(() => {
-    setFilteredOrders(applySortFilter(orderList, order, orderBy, filterName))
-  }, [orderList, order, orderBy, filterName])
+    if (orderList) {
+        const sorted = applySortFilter(orderList, order, orderBy, filterName)
+        
+        switch (filter) {
+            case "cash":
+              setFilteredOrders(sorted.filter(s => s.paymentType === 'CASH'));
+              break;
+            case "gcash":
+              setFilteredOrders(sorted.filter(s => s.paymentType === "GCASH"));
+              break;
+            case "cancelled":
+              setFilteredOrders(sorted.filter(s => s.cancelled));
+              break;
+            default:
+              setFilteredOrders(sorted);
+        }
+    }
+}, [orderList, order, orderBy, filter, filterName])
 
   useEffect(() => {
     setDisplayedOrders(filteredOrders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage))
@@ -111,7 +135,13 @@ export default function TransactionHistory({ orderList, onRefresh }: Transaction
 
   return (
     <Card>
-        <OrderListToolbar filterName={filterName} onFilterName={handleFilterByName} />
+        <OrderListToolbar 
+          filterName={filterName} 
+          options={FILTER_BY_OPTIONS}
+          filter={filter}
+          filterSelected={(value) => setFilter(value)}
+          onFilterName={handleFilterByName} 
+        />
 
         <TableContainer sx={{ minWidth: 800 }}>
             <Table>

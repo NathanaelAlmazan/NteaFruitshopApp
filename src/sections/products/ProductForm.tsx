@@ -42,7 +42,7 @@ export default function ProductForm({ categories, units, image, product }: Produ
     const defaultValue: ProductFormData = {
         code: product ? product.productCode : "",
         name: product ? product.productName : "",
-        categoryId: product ? product.categoryId : categories[0].categoryId,
+        categoryId: product ? product.categoryId : categories.length !== 0 ? categories[0].categoryId : 0,
         discount: product ? product.discountedPrice : 0.00,
         submit: null
     }

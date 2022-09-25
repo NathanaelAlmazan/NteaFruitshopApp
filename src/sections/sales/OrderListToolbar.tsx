@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 // material
 import { styled } from '@mui/material/styles';
-import { Toolbar, Tooltip, IconButton, OutlinedInput, InputAdornment } from '@mui/material';
+import { Toolbar, Tooltip, IconButton, OutlinedInput, InputAdornment, Menu, MenuItem } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 // ----------------------------------------------------------------------
 
@@ -35,9 +35,15 @@ OrderListToolbar.propTypes = {
   onFilterName: PropTypes.func,
 };
 
-interface OrderListToolbar { filterName: string, onFilterName: (e: React.ChangeEvent<HTMLInputElement>) => void }
+interface OrderListToolbar { 
+  filterName: string, 
+  filter: string,
+  filterSelected: (value: string) => void,
+  options: { value: string, label: string }[],
+  onFilterName: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
 
-export default function OrderListToolbar({ filterName, onFilterName }: OrderListToolbar) {
+export default function OrderListToolbar({ filter, options, filterSelected, filterName, onFilterName }: OrderListToolbar) {
   return (
     <RootStyle>
         <SearchStyle
@@ -51,11 +57,57 @@ export default function OrderListToolbar({ filterName, onFilterName }: OrderList
             }
         />
 
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListOutlinedIcon />
-          </IconButton>
-        </Tooltip>
+        <SortMenu options={options} selected={filter} setSelected={filterSelected} />
     </RootStyle>
   );
 }
+
+interface SortMenuProps {
+  selected: string
+  options: { value: string, label: string }[]
+  setSelected: (value: string) => void
+}
+
+const SortMenu = ({ selected, options, setSelected }: SortMenuProps) => {
+  const [open, setOpen] = React.useState(null);
+
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setOpen(event.currentTarget);
+    };
+  
+  const handleClose = () => {
+      setOpen(null);
+  };
+  
+  const handleManuClick = (value: string) => {
+      setSelected(value)
+      setOpen(false)
+  }
+  return (
+      <>
+          <Tooltip title="Sort">
+              <IconButton onClick={handleOpen}>
+                  <FilterListIcon color="inherit" />
+              </IconButton>
+          </Tooltip>
+          <Menu
+              keepMounted
+              anchorEl={open}
+              open={Boolean(open)}
+              onClose={handleClose}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+              {options.map((option) => (
+                  <MenuItem
+                      key={option.value}
+                      selected={option.value === selected}
+                      onClick={() => handleManuClick(option.value)}
+                      sx={{ typography: 'body2' }}
+                  >
+                      {option.label}
+                  </MenuItem>
+              ))}
+          </Menu>
+      </>
+)}
