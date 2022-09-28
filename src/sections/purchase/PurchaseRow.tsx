@@ -15,6 +15,7 @@ import Box from "@mui/material/Box"
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import PurchaseMoreMenu from "./PurchaseMoreMenu"
 import ReceiptDialog from './ReceiptDialog'
+import Label from "../../components/Label"
 // types
 import { PurchaseOrder } from "../../pages/purchase"
 
@@ -63,8 +64,8 @@ export default function PurchaseRow({ purchase, isItemSelected, handleClick, han
                 </TableCell>
                 <TableCell align="left">{purchase.supplier}</TableCell>
                 <TableCell align="left">{`₱ ${purchase.totalPrice.toFixed(2)}`}</TableCell>
-                <TableCell align="right">{purchase.paid ? "Yes" : "No"}</TableCell>
-                <TableCell align="right">{purchase.arrived ? "Yes" : "No"}</TableCell>
+                <TableCell align="right">{purchase.paid ? <Label>Yes</Label> : <Label error>No</Label>}</TableCell>
+                <TableCell align="right">{purchase.arrived ? <Label>Yes</Label> : <Label error>No</Label>}</TableCell>
                 <TableCell align="right">
                     {new Date(purchase.purchaseDate).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })}
                 </TableCell>

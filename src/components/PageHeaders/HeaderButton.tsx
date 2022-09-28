@@ -15,9 +15,10 @@ type HeaderProps = {
   buttonText: string,
   buttonClick: () => void;
   back?: boolean;
+  icon?: React.ReactNode
 }
 
-function PageHeader({ buttonText, title, subtitle, back, buttonClick }: HeaderProps) {
+function PageHeader({ buttonText, title, subtitle, back, icon, buttonClick }: HeaderProps) {
   const navigate = useNavigate();
   return (
     <Grid container justifyContent="space-between" alignItems="center" sx={{ mt: 5, mb: 5 }}>
@@ -44,7 +45,7 @@ function PageHeader({ buttonText, title, subtitle, back, buttonClick }: HeaderPr
         <Button
           sx={{ mt: { xs: 2, md: 0 } }}
           variant="contained"
-          startIcon={<AddTwoToneIcon fontSize="small" />}
+          startIcon={icon ? icon : <AddTwoToneIcon fontSize="small" />}
           onClick={buttonClick}
         >
           {buttonText}

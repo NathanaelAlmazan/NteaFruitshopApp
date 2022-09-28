@@ -90,10 +90,10 @@ export default function BaseOptionChart() {
     // Colors
     colors: [
         theme.palette.primary.main,
-        CHART_COLORS.yellow[0],
+        CHART_COLORS.violet[2],
         CHART_COLORS.red[0],
+        CHART_COLORS.yellow[0],
         CHART_COLORS.blue[0],
-        CHART_COLORS.violet[0],
         CHART_COLORS.green[0]
     ],
 

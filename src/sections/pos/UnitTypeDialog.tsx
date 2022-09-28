@@ -33,6 +33,8 @@ export default function UnitTypeDialog(
     <Dialog
         open={open}
         onClose={handleClose}
+        maxWidth="xs"
+        fullWidth
     >
         <DialogTitle id="alert-dialog-title">
             {`${capitalCase(name)} Type`}

@@ -35,6 +35,12 @@ const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp: (prop) => prop !==
 }));
 
 export default function PurchaseItemCard({ item, onAdd, onReduce, onRemove }: ItemProps) {
+    const { quantity } = item
+    const [longPressed, setLongPressed] = React.useState<boolean>(false)
+
+    React.useEffect(() => {
+        if (longPressed) setTimeout(() => onAdd(), 100);
+    }, [longPressed, quantity])
 
     return (
         <ListItem alignItems="center">
@@ -63,7 +69,14 @@ export default function PurchaseItemCard({ item, onAdd, onReduce, onRemove }: It
                 >
                         {`${item.quantity} ${item.units}`}
                 </Typography>
-                <ButtonBase onClick={() => onAdd()} sx={{ borderRadius: '12px' }}>
+                <ButtonBase
+                    onClick={() => onAdd()} 
+                    onMouseDown={() => setLongPressed(true)}
+                    onTouchStart={() => setLongPressed(true)}
+                    onMouseUp={() => setLongPressed(false)}
+                    onTouchEnd={() => setLongPressed(false)}
+                    sx={{ borderRadius: '12px' }}
+                >
                     <HeaderAvatarStyle variant="rounded">
                         <AddIcon />
                     </HeaderAvatarStyle>

@@ -4,11 +4,11 @@ import merge from 'lodash/merge';
 import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from "apexcharts"
 // @mui
-import { Card, CardHeader, Box, Stack, IconButton } from '@mui/material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { Card, CardHeader, Box, Stack, IconButton, Typography } from '@mui/material';
 // components
 import { BaseOptionChart } from '../../components/charts';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 // ----------------------------------------------------------------------
 
@@ -26,15 +26,24 @@ interface ChartData {
     data: number[],
   }
 
-interface SalesChartProps { title: string, subheader: string, chartLabels: string[], chartData: ChartData[] }
+interface SalesChartProps { 
+  title: string, 
+  subheader: string, 
+  chartLabels: string[], 
+  chartData: ChartData[],
+  page: number,
+  contentLength: number,
+  onSeek: () => void,
+  onBack: () => void,
+  inventory?: string
+}
 
-export default function SalesChart({ title, subheader, chartLabels, chartData, ...other }: SalesChartProps) {
-  const [page, setPage] = React.useState<number>(0)
+export default function SalesChart({ title, subheader, chartLabels, chartData, page, contentLength, inventory, onSeek, onBack, ...other }: SalesChartProps) {
 
   const chartOptions = merge(BaseOptionChart(), {
-    plotOptions: { bar: { columnWidth: '16%' } },
+    plotOptions: { bar: { columnWidth: '25%' } },
     fill: { type: chartData.map((i) => i.fill) },
-    labels: chartLabels.slice(page * 10, page * 10 + 10),
+    labels: chartLabels,
     xaxis: { type: 'datetime' },
     tooltip: {
       shared: true,
@@ -42,7 +51,7 @@ export default function SalesChart({ title, subheader, chartLabels, chartData, .
       y: {
         formatter: (y: number) => {
           if (typeof y !== 'undefined') {
-            return `₱ ${y.toFixed(2)}`;
+            return inventory ? `${y} ${inventory}` : `₱ ${y.toFixed(2)}`;
           }
           return y;
         },
@@ -54,13 +63,16 @@ export default function SalesChart({ title, subheader, chartLabels, chartData, .
     <Card {...other}>
       <CardHeader 
         title={title} 
-        subheader={subheader} 
+        subheader={subheader}
         action={
-          <Stack direction="row" spacing={2}>
-            <IconButton onClick={() => setPage(state => state > 0 ? state - 1 : 0)}>
+          <Stack direction="row" alignItems="center">
+            <IconButton disabled={page === 0} onClick={onBack}>
               <ArrowBackIosIcon />
             </IconButton>
-            <IconButton onClick={() => setPage(state => state + 1)}>
+            {inventory && (
+              <Typography variant="subtitle1">{`Units in (${inventory})`}</Typography>
+            )}
+            <IconButton disabled={Boolean(!inventory && (page + 7) === contentLength) || Boolean(inventory && page === contentLength)} onClick={onSeek}>
               <ArrowForwardIosIcon />
             </IconButton>
           </Stack>
