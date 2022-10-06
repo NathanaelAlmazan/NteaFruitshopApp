@@ -11,7 +11,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import { styled, useTheme, alpha } from '@mui/material/styles'
 import Logo from "../../../components/Logo"
-import appPaths from "../../AppPaths"
+import { adminPaths, ownerPaths } from "../../AppPaths"
 
 const drawerWidth = 280;
 
@@ -50,10 +50,11 @@ const ListItemIconStyle = styled(ListItemIcon)({
 
 interface LeftSideBarProps {
     open: boolean;
+    position: string;
     handleDrawerClose: () => void;
 }
 
-export default function LeftSideBar({ open, handleDrawerClose }: LeftSideBarProps) {
+export default function LeftSideBar({ open, position, handleDrawerClose }: LeftSideBarProps) {
   const theme = useTheme();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -86,19 +87,33 @@ export default function LeftSideBar({ open, handleDrawerClose }: LeftSideBarProp
         </DrawerHeader>
         <Divider />
         <List sx={{ mt: 3 }}>
-        {appPaths.map((path) => (
-            <ListItemStyle 
-                key={path.pathname}
-                active={Boolean(path.pathname === pathname)}
-                onClick={() => handleNavigate(path.pathname)}
-                disableGutters
-            >
-                <ListItemIconStyle>
-                    {path.icon}
-                </ListItemIconStyle>
-                <ListItemText primary={path.title} />
-            </ListItemStyle>
-        ))}
+            {position === "OWNER" ? ownerPaths.map((path) => (
+                <ListItemStyle 
+                    key={path.pathname}
+                    active={Boolean(path.pathname === pathname)}
+                    onClick={() => handleNavigate(path.pathname)}
+                    disableGutters
+                >
+                    <ListItemIconStyle>
+                        {path.icon}
+                    </ListItemIconStyle>
+                    <ListItemText primary={path.title} />
+                </ListItemStyle>
+            )) : (
+                adminPaths.map((path) => (
+                    <ListItemStyle 
+                        key={path.pathname}
+                        active={Boolean(path.pathname === pathname)}
+                        onClick={() => handleNavigate(path.pathname)}
+                        disableGutters
+                    >
+                        <ListItemIconStyle>
+                            {path.icon}
+                        </ListItemIconStyle>
+                        <ListItemText primary={path.title} />
+                    </ListItemStyle>
+                ))
+            )}
         </List>
         <Divider />
     </Drawer>

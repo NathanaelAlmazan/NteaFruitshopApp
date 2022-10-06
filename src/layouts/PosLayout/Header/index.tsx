@@ -27,22 +27,25 @@ const AppBar = styled(MuiAppBar)(({ theme }) => ({
 
 interface HeaderProps {
     open: boolean;
+    position: string;
     handleDrawerOpen: () => void;
 }
 
-export default function Header({ open, handleDrawerOpen }: HeaderProps) {
+export default function Header({ open, position, handleDrawerOpen }: HeaderProps) {
   return (
     <AppBar position="fixed">
     <Toolbar sx={{ width: { xs: "100%", lg: "calc(100% - 450px)" } }}>
-        <IconButton
-          color="primary"
-          aria-label="open drawer"
-          onClick={handleDrawerOpen}
-          edge="start"
-          sx={{ mr: 2, ...(open && { display: 'none' }) }}
-        >
-          <MenuIcon />
-        </IconButton>
+        {["OWNER", "ADMIN"].includes(position) && (
+            <IconButton
+              color="primary"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{ mr: 2, ...(open && { display: 'none' }) }}
+            >
+              <MenuIcon />
+            </IconButton>
+        )}
         
         <Stack direction="row" justifyContent="space-between" sx={{ width: "100%", mt: 2, mb: 2 }}>
           <Logo />

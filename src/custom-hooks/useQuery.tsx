@@ -1,12 +1,12 @@
 import React from 'react';
 import axios, { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-// const baseURL = "https://ntea.herokuapp.com/api"
-const baseURL = "http://localhost:8080/api"
+import baseURL from "./baseUrl"
+import useAppSelector from "./useAppSelector"
 
 export default function useQuery<R>(url: string) {
     const navigate = useNavigate();
+    const { auth } = useAppSelector((state) => state)
     const [data, setData] = React.useState<R | null>(null)
     const [error, setError] = React.useState<AxiosError | null>(null)
     const [loading, setLoading] = React.useState<boolean>(false)
@@ -17,7 +17,7 @@ export default function useQuery<R>(url: string) {
     React.useEffect(() => {
         setLoading(true)
 
-        axios.get(baseURL + url)
+        axios.get(baseURL + url, { headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${auth.token}` } })
             .then((response) => {
                 setData(response.data)
                 setLoading(false)
@@ -26,6 +26,7 @@ export default function useQuery<R>(url: string) {
                 const error = err as AxiosError
 
                 if (error.code === "ERR_NETWORK") navigate("/error/offline")
+                else if (error.response?.status === 403) navigate("/auth/login")
                 else setError(error)
             });
         

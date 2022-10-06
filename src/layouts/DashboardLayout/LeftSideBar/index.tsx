@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import { styled, alpha } from '@mui/material/styles'
 import Logo from "../../../components/Logo"
-import appPaths from "../../AppPaths"
+import { adminPaths, ownerPaths } from "../../AppPaths"
 
 const drawerWidth = 280;
 
@@ -48,11 +48,12 @@ const ListItemIconStyle = styled(ListItemIcon)({
 
 interface LeftSideBarProps {
     open: boolean;
+    position: string;
     handleDrawerClose: () => void;
     window?: () => Window;
 }
 
-export default function LeftSideBar({ open, window, handleDrawerClose }: LeftSideBarProps) {
+export default function LeftSideBar({ open, position, window, handleDrawerClose }: LeftSideBarProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -68,8 +69,21 @@ export default function LeftSideBar({ open, window, handleDrawerClose }: LeftSid
         </DrawerHeader>
         <Divider />
         <List sx={{ mt: 3 }}>
-            {appPaths.map((path) => (
+            {position === "OWNER" ? ownerPaths.map((path) => (
                 <ListItemStyle
+                  key={path.pathname}
+                  open={path.pathname === pathname}
+                  onClick={() => handleNavigate(path.pathname)}
+                  disableGutters
+              >
+                  <ListItemIconStyle>
+                      {path.icon}
+                  </ListItemIconStyle>
+                  <ListItemText primary={path.title} />
+              </ListItemStyle>
+            )) : (
+                adminPaths.map((path) => (
+                  <ListItemStyle
                     key={path.pathname}
                     open={path.pathname === pathname}
                     onClick={() => handleNavigate(path.pathname)}
@@ -80,7 +94,8 @@ export default function LeftSideBar({ open, window, handleDrawerClose }: LeftSid
                     </ListItemIconStyle>
                     <ListItemText primary={path.title} />
                 </ListItemStyle>
-            ))}
+                ))
+            )}
         </List>
         <Divider />
     </>

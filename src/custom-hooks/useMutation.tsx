@@ -1,9 +1,8 @@
 import React from 'react';
 import axios, { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-// const baseURL = "https://ntea.herokuapp.com/api"
-const baseURL = "http://localhost:8080/api"
+import baseURL from "./baseUrl"
+import useAppSelector from "./useAppSelector"
 
 interface ErrorResponseData {
     timestamp: string;
@@ -13,6 +12,7 @@ interface ErrorResponseData {
 
 export default function useMutation<R>() {
     const navigate = useNavigate();
+    const { auth } = useAppSelector((state) => state)
     const [data, setData] = React.useState<R | null>(null)
     const [error, setError] = React.useState<ErrorResponseData | null>(null)
     const [loading, setLoading] = React.useState<boolean>(false)
@@ -20,12 +20,13 @@ export default function useMutation<R>() {
     const insert = (url: string, body: string) => {
         setLoading(true)
 
-        axios.post(baseURL + url, body, { headers: { 'Content-Type': 'application/json' } })
+        axios.post(baseURL + url, body, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` } })
             .then((response) => {
                 setData(response.data)
                 setLoading(false)
             })
             .catch((err) => {
+                console.log(err)
                 const error = err as AxiosError
 
                 if (error.code === "ERR_NETWORK") navigate("/error/offline")
@@ -36,7 +37,7 @@ export default function useMutation<R>() {
     const update = (url: string, body: string) => {
         setLoading(true)
 
-        axios.put(baseURL + url, body, { headers: { 'Content-Type': 'application/json' } })
+        axios.put(baseURL + url, body, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` } })
             .then((response) => {
                 setData(response.data)
                 setLoading(false)
@@ -52,7 +53,7 @@ export default function useMutation<R>() {
     const remove = (url: string) => {
         setLoading(true)
 
-        axios.delete(baseURL + url, { headers: { 'Content-Type': 'application/json' } })
+        axios.delete(baseURL + url, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` } })
             .then((response) => {
                 setData(response.data)
                 setLoading(false)

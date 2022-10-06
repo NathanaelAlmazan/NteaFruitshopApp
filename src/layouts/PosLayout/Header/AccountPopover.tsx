@@ -6,6 +6,8 @@ import { Box, Chip, Divider, Typography, Stack, MenuItem, Avatar, useTheme } fro
 import MenuPopover from '../../../components/MenuPopover';
 // icons
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import { logout } from "../../../redux/slice/auth"
+import { useAppDispatch } from '../../../custom-hooks'
 
 
 const account = {
@@ -38,6 +40,7 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const theme = useTheme();
+  const dispatch = useAppDispatch()
   const anchorRef = useRef(null);
 
   const [open, setOpen] = useState(null);
@@ -49,6 +52,8 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(null);
   };
+
+  const handleLogout = () => dispatch(logout())
 
   return (
     <>
@@ -132,7 +137,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </MenuPopover>

@@ -1,5 +1,5 @@
-import React from 'react'
-import { Outlet } from "react-router-dom" 
+import React, { useEffect } from 'react'
+import { Outlet, useNavigate } from "react-router-dom" 
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -33,9 +33,14 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function PosLayout() {
-  const { cart: items } = useAppSelector((state) => state)
+  const navigate = useNavigate()
+  const { cart: items, auth } = useAppSelector((state) => state)
   const [open, setOpen] = React.useState(false);
   const [cart, setCart] = React.useState(false);
+
+  useEffect(() => {
+    if (!auth.token) navigate("/auth/login")
+  }, [auth])
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
@@ -45,8 +50,8 @@ export default function PosLayout() {
   return (
     <Box sx={{ display: 'flex', position: "relative" }}>
       <CssBaseline />
-      <Header open={open} handleDrawerOpen={handleDrawerOpen} />
-      <LeftSideBar open={open} handleDrawerClose={handleDrawerClose} />
+      <Header open={open} position={auth.position} handleDrawerOpen={handleDrawerOpen} />
+      <LeftSideBar open={open} position={auth.position} handleDrawerClose={handleDrawerClose} />
       <ProductCartWidget value={items.items.length} handleClick={handleToggle} />
       <Main>
         <DrawerHeader />
