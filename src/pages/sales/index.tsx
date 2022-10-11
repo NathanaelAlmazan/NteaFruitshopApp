@@ -79,7 +79,7 @@ export default function SalesPage() {
                 <SalesChart
                     title="Report"
                     subheader="Transactions' History every selling days"
-                    chartLabels={content.map(c => `${c.date.getMonth()}/${c.date.getDate() + 1}/${c.date.getFullYear()}`).slice(page, page + 7)}
+                    chartLabels={content.map(c => `${c.date.getMonth() + 1}/${c.date.getDate()}/${c.date.getFullYear()}`).slice(page, page + 7)}
                     page={page}
                     chartData={[
                         {

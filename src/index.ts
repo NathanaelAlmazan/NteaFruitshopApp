@@ -29,7 +29,7 @@ const createWindow = (): void => {
   mainWindow.maximize();
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   ipcMain.on("download", (event, args) => {
     mainWindow.webContents.downloadURL(args)

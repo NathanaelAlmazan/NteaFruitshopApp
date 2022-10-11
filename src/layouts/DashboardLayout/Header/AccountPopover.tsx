@@ -1,49 +1,28 @@
 import React, { useRef, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 // @mui
 import { Box, Chip, Divider, Typography, Stack, MenuItem, Avatar, useTheme } from '@mui/material';
 // components
 import MenuPopover from '../../../components/MenuPopover';
+import EditProfileDialog from '../../../sections/accounts/EditProfileDialog';
 // icons
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { logout } from "../../../redux/slice/auth"
-import { useAppDispatch } from '../../../custom-hooks'
-
-
-const account = {
-    displayName: 'Jaydon Frankie',
-    email: 'demo@minimals.cc',
-    photoURL: 'https://res.cloudinary.com/ddpqji6uq/image/upload/v1660784778/graphql_images/logo512_gclk73.png',
-};
-
-// ----------------------------------------------------------------------
-
-const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-    linkTo: '/',
-  },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-    linkTo: '#',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-    linkTo: '#',
-  },
-];
+import { useAppDispatch, useAppSelector } from '../../../custom-hooks'
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const theme = useTheme();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch()
+  const { auth } = useAppSelector((state) => state)
   const anchorRef = useRef(null);
 
+  const { firstName, lastName, position, image } = auth
+
   const [open, setOpen] = useState(null);
+  const [profile, setProfile] = useState<boolean>(false);
 
   const handleOpen = (event: React.MouseEvent<HTMLDivElement>) => {
     setOpen(event.currentTarget);
@@ -79,7 +58,7 @@ export default function AccountPopover() {
         }}
         icon={
             <Avatar
-                src={account.photoURL}
+                src={image ? image : "https://res.cloudinary.com/ddpqji6uq/image/upload/v1661866066/graphql_images/n_tea-logo_rntoqs.png"}
                 sx={{
                   width: '34px',
                   height: '34px',
@@ -118,21 +97,22 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {`${firstName} ${lastName}`}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {position}
           </Typography>
         </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack sx={{ p: 1 }}>
-          {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} to={option.linkTo} component={RouterLink} onClick={handleClose}>
-              {option.label}
-            </MenuItem>
-          ))}
+          <MenuItem onClick={() => navigate("/app/pos")}>
+            Home
+          </MenuItem>
+          <MenuItem onClick={() => setProfile(true)}>
+            Profile
+          </MenuItem>
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -141,6 +121,8 @@ export default function AccountPopover() {
           Logout
         </MenuItem>
       </MenuPopover>
+
+      <EditProfileDialog open={profile} handleClose={() => setProfile(false)} />
     </>
   );
 }

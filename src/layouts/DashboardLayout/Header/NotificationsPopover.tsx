@@ -1,12 +1,12 @@
-import { set, sub } from 'date-fns';
+import { sub } from 'date-fns';
 import { noCase } from 'change-case';
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useRef, ReactNode } from 'react';
 // @mui
 import {
   Box,
   List,
   Badge,
-  Button,
   Avatar,
   Tooltip,
   Divider,
@@ -22,64 +22,90 @@ import {
 import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
 import MenuPopover from '../../../components/MenuPopover';
+import { useQuery, useAppSelector, useAppDispatch } from '../../../custom-hooks'
+import { addNotification } from "../../../redux/slice/search"
+import { DuePurchaseOrders } from '../../../pages/purchase';
+import { InventoryItem } from '../../../pages/inventory';
+// Icons
+import AllInboxIcon from '@mui/icons-material/AllInbox';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 
-// ----------------------------------------------------------------------
+interface Notifications {
+    id: number;
+    title: string;
+    description: string;
+    avatar: string;
+    type: string;
+    createdAt: Date;
+    isUnRead: boolean;
+}
 
-const NOTIFICATIONS = [
-  {
-    id: 1,
-    title: 'Your order is placed',
-    description: 'waiting for shipping',
-    avatar: null,
-    type: 'order_placed',
-    createdAt: set(new Date(), { hours: 10, minutes: 30 }),
-    isUnRead: true,
-  },
-  {
-    id: 2,
-    title: "Nathan Almazan",
-    description: 'answered to your comment on the Minimal',
-    avatar: '/static/mock-images/avatars/avatar_2.jpg',
-    type: 'friend_interactive',
-    createdAt: sub(new Date(), { hours: 3, minutes: 30 }),
-    isUnRead: true,
-  },
-  {
-    id: 3,
-    title: 'You have new message',
-    description: '5 unread messages',
-    avatar: null,
-    type: 'chat_message',
-    createdAt: sub(new Date(), { days: 1, hours: 3, minutes: 30 }),
-    isUnRead: false,
-  },
-  {
-    id: 4,
-    title: 'You have new mail',
-    description: 'sent from Guido Padberg',
-    avatar: null,
-    type: 'mail',
-    createdAt: sub(new Date(), { days: 2, hours: 3, minutes: 30 }),
-    isUnRead: false,
-  },
-  {
-    id: 5,
-    title: 'Delivery processing',
-    description: 'Your order is being shipped',
-    avatar: null,
-    type: 'order_shipped',
-    createdAt: sub(new Date(), { days: 3, hours: 3, minutes: 30 }),
-    isUnRead: false,
-  },
-];
 
 export default function NotificationsPopover() {
   const theme = useTheme();
   const anchorRef = useRef<HTMLButtonElement | null>(null);
+  const { search } = useAppSelector((state) => state)
+  const dispatch = useAppDispatch()
+  const [purchaseNotif, setPurchaseNotif] = useState<Notifications[]>([])
+  const [inventoryNotif, setInventoryNotif] = useState<Notifications[]>([])
+  const [totalUnread, setTotalUnread] = useState<number>(0)
+  const { data: unpaidPurchases } = useQuery<DuePurchaseOrders[]>("/purchase/unpaid")
+  const { data: inventory } = useQuery<InventoryItem[]>("/ingredients")
 
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  React.useEffect(() => {
+      if (unpaidPurchases) {
+        const criticalDueDate: Notifications[] = []
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+        unpaidPurchases.forEach(purchase => {
+          const today = new Date().getTime()
+          const due = new Date(purchase.dueDate).getTime()
+          const diff = Math.floor((due - today)/(24*3600*1000))
+
+          if (diff < 7) {
+            const purchaseUid = `${Array(5 - purchase.purchaseOrder.purchaseId.toFixed(0).length).fill(0).map(() => "0").join("")}${purchase.purchaseOrder.purchaseId}`
+
+            criticalDueDate.push({
+              id: criticalDueDate.length,
+              title: `Order #${purchaseUid} from ${purchase.purchaseOrder.supplier}`,
+              description: 'Your have less than 7 days before the due date',
+              avatar: null,
+              type: 'unpaid_order',
+              createdAt: sub(new Date(), { days: 3, hours: 3, minutes: 30 }),
+              isUnRead: !search.notification.includes(`Order #${purchaseUid} from ${purchase.purchaseOrder.supplier}`),
+            })
+          }
+        })
+
+        setPurchaseNotif(criticalDueDate)
+      }
+  }, [unpaidPurchases, search])
+
+  React.useEffect(() => {
+    if (inventory) {
+      const criticalSupply: Notifications[] = []
+
+      inventory.forEach(item => {
+        if (item.inStock <= 5) {
+          criticalSupply.push({
+            id: criticalSupply.length,
+            title: `Item ${item.itemName} is in critical level`,
+            description: `You have only ${item.inStock} in stock.`,
+            avatar: null,
+            type: 'critical_stock',
+            createdAt: sub(new Date(), { days: 1, hours: 8, minutes: 10 }),
+            isUnRead: !search.notification.includes(`Item ${item.itemName} is in critical level`),
+          })
+        }
+      })
+
+      setInventoryNotif(criticalSupply)
+    }
+  }, [inventory, search])
+
+  React.useEffect(() => {
+    const notifs = inventoryNotif.concat(purchaseNotif)
+    setTotalUnread(notifs.filter(n => n.isUnRead).length)
+  }, [purchaseNotif, inventoryNotif])
 
   const [open, setOpen] = useState(null);
 
@@ -92,12 +118,9 @@ export default function NotificationsPopover() {
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
-        isUnRead: false,
-      }))
-    );
+   const readInventory = inventoryNotif.map(n => n.title)
+   const readPurchase = purchaseNotif.map(p => p.title)
+   dispatch(addNotification(readPurchase.concat(readInventory)))
   };
 
   return (
@@ -122,7 +145,7 @@ export default function NotificationsPopover() {
           }
         }}
       >
-        <Badge badgeContent={totalUnRead} color="error">
+        <Badge badgeContent={totalUnread} color="error">
           <Iconify icon="eva:bell-fill" width={20} height={20} />
         </Badge>
       </IconButton>
@@ -137,11 +160,11 @@ export default function NotificationsPopover() {
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">Notifications</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
+              You have {totalUnread} unread messages
             </Typography>
           </Box>
 
-          {totalUnRead > 0 && (
+          {totalUnread > 0 && (
             <Tooltip title=" Mark all as read">
               <IconButton color="primary" onClick={handleMarkAllAsRead}>
                 <Iconify icon="eva:done-all-fill" width={20} height={20} />
@@ -153,40 +176,36 @@ export default function NotificationsPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
-          <List
-            disablePadding
-            subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
-              </ListSubheader>
-            }
-          >
-            {notifications.slice(0, 2).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
-          </List>
+          {purchaseNotif.length > 0 && (
+            <List
+              disablePadding
+              subheader={
+                <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
+                  Due Dates
+                </ListSubheader>
+              }
+            >
+              {purchaseNotif.map((notification) => (
+                <NotificationItem key={notification.id} notification={notification} />
+              ))}
+            </List>
+          )}
 
-          <List
-            disablePadding
-            subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
-              </ListSubheader>
-            }
-          >
-            {notifications.slice(2, 5).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
-          </List>
+          {inventoryNotif.length > 0 && (
+            <List
+              disablePadding
+              subheader={
+                <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
+                  Out of Stock
+                </ListSubheader>
+              }
+            >
+              {inventoryNotif.map((notification) => (
+                <NotificationItem key={notification.id} notification={notification} />
+              ))}
+            </List>
+          )}
         </Scrollbar>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple>
-            View All
-          </Button>
-        </Box>
       </MenuPopover>
     </>
   );
@@ -205,10 +224,12 @@ interface Notification {
 }
 
 function NotificationItem({ notification }: { notification: Notification}) {
+  const navigate = useNavigate()
   const { avatar, title } = renderContent(notification);
 
   return (
     <ListItemButton
+      onClick={() => navigate(notification.type === "critical_stock" ? "/admin/inventory" : "/admin/purchase")}
       sx={{
         py: 1.5,
         px: 2.5,
@@ -254,15 +275,15 @@ function renderContent(notification: Notification) {
     </Typography>
   );
 
-  if (notification.type === 'order_placed') {
+  if (notification.type === 'critical_stock') {
     return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
+      avatar: <AllInboxIcon color="primary" />,
       title,
     };
   }
-  if (notification.type === 'order_shipped') {
+  if (notification.type === 'unpaid_order') {
     return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_shipping.svg" />,
+      avatar: <ReceiptIcon  color="primary" />,
       title,
     };
   }

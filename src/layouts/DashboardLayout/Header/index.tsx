@@ -39,30 +39,27 @@ interface HeaderProps {
 export default function Header({ position, handleDrawerOpen }: HeaderProps) {
   return (
     <AppBar position="fixed">
-    <Toolbar sx={{ width: "100%" }}>
-        {["OWNER", "ADMIN"].includes(position) && (
-          <IconButton
-            color="primary"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ display: { md: 'none' }, mb: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-        )}
-        
-        <Stack direction="row" justifyContent="space-between" sx={{ width: "100%", mt: 2, mb: 2 }}>
-          <SearchSection />
-
-          <Stack direction="row" spacing={2} alignItems="center">
-            <NotificationsPopover />
-            <AccountPopover />
-          </Stack>
+      <Toolbar sx={{ width: "100%" }}>
+          {["OWNER", "ADMIN"].includes(position) && (
+            <IconButton
+              color="primary"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{ display: { md: 'none' }, mb: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           
-        </Stack>
-
-    </Toolbar>
+          <Stack direction="row" justifyContent="space-between" sx={{ width: "100%", mt: 2, mb: 2 }}>
+            <SearchSection />
+            <Stack direction="row" spacing={2} alignItems="center">
+              <NotificationsPopover />
+              <AccountPopover />
+            </Stack>
+          </Stack>
+      </Toolbar>
     </AppBar>
   )
 }

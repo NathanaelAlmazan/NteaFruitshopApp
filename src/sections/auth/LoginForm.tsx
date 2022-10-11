@@ -6,13 +6,10 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 // material
 import {
-  Link,
   Stack,
-  Checkbox,
   TextField,
   IconButton,
-  InputAdornment,
-  FormControlLabel
+  InputAdornment
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { baseURL, useAppDispatch } from '../../custom-hooks'
@@ -37,8 +34,6 @@ export default function LoginForm() {
   });
 
   const { emailError, passError } = loginError;
-
-  const onRouterClick = (path: string) => navigate(path)
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
@@ -75,11 +70,14 @@ export default function LoginForm() {
         }).then(response => {
           const user: UserAccount = response.data
           dispatch(login({
+            id: user.userId,
             firstName: user.firstName,
             lastName: user.lastName,
             username: values.email,
             token: tokens.access_token,
-            position: user.userPosition
+            position: user.userPosition,
+            phone: user.phone,
+            image: user.image
           }))
           navigate("/app/pos")
         })
@@ -98,7 +96,7 @@ export default function LoginForm() {
     }
   });
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, isSubmitting, handleSubmit, getFieldProps } = formik;
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
@@ -138,23 +136,13 @@ export default function LoginForm() {
           />
         </Stack>
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <FormControlLabel
-            control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
-            label="Remember me"
-          />
-
-          <Link onClick={() => onRouterClick("/reset/password")} variant="subtitle2" >
-            Forgot password?
-          </Link>
-        </Stack>
-
         <LoadingButton
           fullWidth
           size="large"
           type="submit"
           variant="contained"
           loading={isSubmitting}
+          sx={{ mt: 5 }}
         >
           Login
         </LoadingButton>
