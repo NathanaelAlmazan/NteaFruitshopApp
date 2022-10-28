@@ -1,197 +1,68 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 // material-ui
-import { useTheme, styled } from '@mui/material/styles';
-import { Avatar, Box, ButtonBase, Card, Grid, InputAdornment, OutlinedInput, Popper } from '@mui/material';
-// third-party
-import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
+import { InputAdornment, Autocomplete, TextField } from '@mui/material';
 // project imports
-import Transitions from '../../../components/Transitions';
-import { useAppDispatch } from "../../../custom-hooks"
+import { useAppDispatch, useQuery } from "../../../custom-hooks"
 import { search } from "../../../redux/slice/search"
 // assets
 import SearchIcon from '@mui/icons-material/Search';
-import CloseIcon from '@mui/icons-material/Close';
-import TuneIcon from '@mui/icons-material/Tune';
-import { shouldForwardProp } from '@mui/system';
-
-// styles
-const PopperStyle = styled(Popper, { shouldForwardProp })(({ theme }) => ({
-    zIndex: 1100,
-    width: '99%',
-    top: '-55px !important',
-    padding: '0 12px',
-    [theme.breakpoints.down('sm')]: {
-        padding: '0 10px'
-    }
-}));
-
-const OutlineInputStyle = styled(OutlinedInput, { shouldForwardProp })(({ theme }) => ({
-    width: 434,
-    marginLeft: 16,
-    paddingLeft: 16,
-    paddingRight: 16,
-    '& input': {
-        background: 'transparent !important',
-        paddingLeft: '4px !important'
-    },
-    [theme.breakpoints.down('lg')]: {
-        width: 250
-    },
-    [theme.breakpoints.down('md')]: {
-        width: '100%',
-        marginLeft: 4,
-        background: '#fff'
-    }
-}));
-
-const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp })(({ theme }) => ({
-    cursor: 'pointer', borderRadius: '8px',
-    width: '34px', height: '34px', fontSize: '1.2rem',
-    background: theme.palette.secondary.light,
-    color: theme.palette.secondary.dark,
-    '&:hover': {
-        background: theme.palette.secondary.dark,
-        color: theme.palette.secondary.light
-    }
-}));
-
-// ==============================|| SEARCH INPUT - MOBILE||============================== //
-
-interface MobileSearchProps {
-    value: string,
-    setValue: (value: string) => void,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    popupState: any
-}
-
-const MobileSearch = ({ value, setValue, popupState }: MobileSearchProps) => {
-    const theme = useTheme();
-
-    return (
-        <OutlineInputStyle
-            id="input-search-header"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="Search"
-            startAdornment={
-                <InputAdornment position="start">
-                    <SearchIcon sx={{ color: theme.palette.grey[500] }} />
-                </InputAdornment>
-            }
-            endAdornment={
-                <InputAdornment position="end">
-                    <ButtonBase sx={{ borderRadius: '12px' }}>
-                        <HeaderAvatarStyle variant="rounded">
-                            <TuneIcon />
-                        </HeaderAvatarStyle>
-                    </ButtonBase>
-                    <Box sx={{ ml: 2 }}>
-                        <ButtonBase sx={{ borderRadius: '12px' }}>
-                            <Avatar
-                                variant="rounded"
-                                sx={{
-                                    cursor: 'pointer', borderRadius: '8px',
-                                    width: '34px', height: '34px', fontSize: '1.2rem',
-                                    background: theme.palette.secondary.light,
-                                    color: theme.palette.secondary.dark,
-                                    '&:hover': {
-                                        background: theme.palette.secondary.dark,
-                                        color: theme.palette.secondary.light
-                                    }
-                                }}
-                                {...bindToggle(popupState)}
-                            >
-                                <CloseIcon />
-                            </Avatar>
-                        </ButtonBase>
-                    </Box>
-                </InputAdornment>
-            }
-            aria-describedby="search-helper-text"
-            inputProps={{ 'aria-label': 'weight' }}
-        />
-    );
-};
 
 // ==============================|| SEARCH INPUT ||============================== //
 
 const SearchSection = () => {
-    const theme = useTheme();
     const dispatch = useAppDispatch();
-    const [value, setValue] = useState<string>('');
+    const location = useLocation();
+    const [inputValue, setInputValue] = useState<string>('')
+    const [value, setValue] = useState<string | null>(null);
+    const [options, setOptions] = useState<string[]>([]);
+    const { data: products, loading } = useQuery<string[]>(
+      location.pathname === "/admin/accounts" ? "/users/names" : "/products/names"
+    );
+
+    const searchPaths = ["/app/pos", "/admin/products", "/admin/accounts"];
 
     React.useEffect(() => {
-        dispatch(search(value))
+        if (products) setOptions(products)
+    }, [products])
+
+    React.useEffect(() => {
+        dispatch(search(value ? value : ''))
     }, [value])
 
-    return (
-        <>
-            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-                <PopupState variant="popper" popupId="demo-popup-popper">
-                    {(popupState) => (
-                        <>
-                            <Box sx={{ ml: 2 }}>
-                                <ButtonBase sx={{ borderRadius: '12px' }}>
-                                    <HeaderAvatarStyle variant="rounded" {...bindToggle(popupState)}>
-                                        <SearchIcon />
-                                    </HeaderAvatarStyle>
-                                </ButtonBase>
-                            </Box>
-                            <PopperStyle {...bindPopper(popupState)} transition>
-                                {({ TransitionProps }) => (
-                                    <>
-                                        <Transitions type="zoom" {...TransitionProps} sx={{ transformOrigin: 'center left' }}>
-                                            <Card
-                                                sx={{
-                                                    background: '#fff',
-                                                    [theme.breakpoints.down('sm')]: {
-                                                        border: 0,
-                                                        boxShadow: 'none'
-                                                    }
-                                                }}
-                                            >
-                                                <Box sx={{ p: 2 }}>
-                                                    <Grid container alignItems="center" justifyContent="space-between">
-                                                        <Grid item xs>
-                                                            <MobileSearch value={value} setValue={setValue} popupState={popupState} />
-                                                        </Grid>
-                                                    </Grid>
-                                                </Box>
-                                            </Card>
-                                        </Transitions>
-                                    </>
-                                )}
-                            </PopperStyle>
-                        </>
-                    )}
-                </PopupState>
-            </Box>
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                <OutlineInputStyle
-                    id="input-search-header"
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
+    if (searchPaths.includes(location.pathname)) return (
+        <Autocomplete
+            freeSolo
+            disableClearable
+            loading={loading}
+            options={options}
+            value={value}
+            inputValue={inputValue}
+            onChange={(event: unknown, newValue: string | null) => {
+                setValue(newValue);
+            }}
+            onInputChange={(event, newInputValue) => {
+                if (newInputValue.length === 0) setValue(null);
+                setInputValue(newInputValue)
+            }}
+            sx={{ width: 350 }}
+            renderInput={(params) => (
+                <TextField 
+                    {...params} 
                     placeholder="Search"
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <SearchIcon sx={{ color: theme.palette.grey[500] }} />
-                        </InputAdornment>
-                    }
-                    endAdornment={
-                        <InputAdornment position="end">
-                            <ButtonBase sx={{ borderRadius: '12px' }}>
-                                <HeaderAvatarStyle variant="rounded">
-                                    <TuneIcon />
-                                </HeaderAvatarStyle>
-                            </ButtonBase>
-                        </InputAdornment>
-                    }
-                    aria-describedby="search-helper-text"
-                    inputProps={{ 'aria-label': 'weight' }}
+                    InputProps={{
+                        ...params.InputProps,
+                        type: 'search',
+                        startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>
+                    }}
                 />
-            </Box>
-        </>
-    );
+            )}
+        />
+    )
+
+    return (
+        <div></div>
+    )
 };
 
 export default SearchSection;

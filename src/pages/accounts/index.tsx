@@ -23,7 +23,7 @@ function Accounts() {
     if (accounts) {
       const query = search.searchQuery.toLowerCase()
       if (query.length > 0) 
-        setFiltered(accounts.filter(a => a.firstName.toLowerCase().includes(query) || a.lastName.toLowerCase().includes(search.searchQuery)))
+        setFiltered(accounts.filter(a => query.includes(a.firstName.toLowerCase()) || query.includes(a.lastName.toLowerCase())))
       else setFiltered(accounts)
     } 
   }, [search, accounts])
