@@ -27,12 +27,26 @@ const styles = StyleSheet.create({
   });
 
 
-const InvoiceTableFooter = ({ total }: { total: number}) => {
+const InvoiceTableFooter = ({ total, paid, discounted }: { total: number, paid: number, discounted: boolean }) => {
     return(    
-        <View style={styles.row}>
-            <Text style={styles.description}>TOTAL</Text>
-            <Text style={styles.total}>{total.toFixed(2)}</Text>
-        </View>
+        <>
+            <View style={styles.row}>
+                <Text style={styles.description}>TOTAL AMOUNT</Text>
+                <Text style={styles.total}>{total.toFixed(2)}</Text>
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.description}>DISCOUNT</Text>
+                <Text style={styles.total}>{discounted ? "20%" : "0%"}</Text>
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.description}>PAID AMOUNT</Text>
+                <Text style={styles.total}>{paid ? paid.toFixed(2) : total.toFixed(2)}</Text>
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.description}>CHANGE</Text>
+                <Text style={styles.total}>{paid ? (paid - total).toFixed(2) : 0.00}</Text>
+            </View>
+        </>
     )
 };
   

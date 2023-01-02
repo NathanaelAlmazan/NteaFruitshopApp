@@ -134,7 +134,7 @@ export default function RegisterForm() {
           variant="contained"
           loading={isSubmitting}
         >
-          Register
+          Change Password
         </LoadingButton>
       </Form>
     </FormikProvider>

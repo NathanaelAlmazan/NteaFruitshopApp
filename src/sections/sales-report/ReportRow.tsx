@@ -14,21 +14,21 @@ const styles = StyleSheet.create({
         fontStyle: 'bold',
     },
     description: {
-        width: '40%',
+        width: '35%',
         textAlign: 'left',
         borderRightColor: borderColor,
         borderRightWidth: 1,
         paddingLeft: 8,
     },
     qty: {
-        width: '20%',
+        width: '15%',
         borderRightColor: borderColor,
         borderRightWidth: 1,
         textAlign: 'right',
         paddingRight: 8,
     },
     rate: {
-        width: '20%',
+        width: '15%',
         borderRightColor: borderColor,
         borderRightWidth: 1,
         textAlign: 'right',
@@ -46,9 +46,10 @@ const InvoiceTableRow = ({ items }: { items: ChartData[] }) => {
     const rows = items.map( item => (
             <View style={styles.row} key={item.date.toISOString()}>
                 <Text style={styles.description}>{item.date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })}</Text>
-                <Text style={styles.qty}>{`PHP ${item.sales.toFixed(2)}`}</Text>
-                <Text style={styles.rate}>{`PHP ${item.purchase.toFixed(2)}`}</Text>
-                <Text style={styles.amount}>{`PHP ${item.profit.toFixed(2)}`}</Text>
+                <Text style={styles.qty}>{`P${item.cash.toFixed(2)}`}</Text>
+                <Text style={styles.qty}>{`P${item.gcash.toFixed(2)}`}</Text>
+                <Text style={styles.rate}>{`P${item.purchase.toFixed(2)}`}</Text>
+                <Text style={styles.amount}>{`P${item.profit.toFixed(2)}`}</Text>
             </View>
         ))
 

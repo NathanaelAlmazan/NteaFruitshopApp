@@ -15,17 +15,17 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     description: {
-        width: '40%',
+        width: '35%',
         borderRightColor: borderColor,
         borderRightWidth: 1,
     },
     qty: {
-        width: '20%',
+        width: '15%',
         borderRightColor: borderColor,
         borderRightWidth: 1,
     },
     rate: {
-        width: '20%',
+        width: '15%',
         borderRightColor: borderColor,
         borderRightWidth: 1,
     },
@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
   const ReportTableHeader = () => (
     <View style={styles.container}>
         <Text style={styles.description}>Report Date</Text>
-        <Text style={styles.qty}>Receivable</Text>
+        <Text style={styles.qty}>Cash Receivable</Text>
+        <Text style={styles.qty}>GCash Receivable</Text>
         <Text style={styles.rate}>Payable</Text>
         <Text style={styles.amount}>Profit</Text>
     </View>

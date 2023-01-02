@@ -21,6 +21,7 @@ const createWindow = (): void => {
       nodeIntegration: false,
       contextIsolation: true
     },
+    icon: './src/images/icon.jpg'
   });
 
   // and load the index.html of the app.

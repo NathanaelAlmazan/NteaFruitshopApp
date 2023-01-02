@@ -34,7 +34,15 @@ export default function SalesPage() {
     if (sales && purchases) {
         let startIndex = 0;
 
-        const data: ChartData[] = sales.map(s => ({ date: new Date(`${s.reportMonth}/${s.reportDate}/${s.reportYear}`), sales: s.totalSales, purchase: 0, profit: s.totalSales }))
+        const data: ChartData[] = sales.map(s => ({ 
+                date: new Date(`${s.reportMonth}/${s.reportDate}/${s.reportYear}`), 
+                gcash: s.totalGCash, 
+                cash: s.totalSales - s.totalGCash,
+                sales: s.totalSales, 
+                purchase: 0, 
+                profit: s.totalSales
+        }))
+        
         purchases.forEach((p, i) => {
             const purchaseDate = new Date(`${p.reportMonth}/${p.reportDate}/${p.reportYear}`)
             const index = data.findIndex(d => d.date.getTime() === purchaseDate.getTime())
@@ -44,7 +52,13 @@ export default function SalesPage() {
                 data[index].profit = data[index].sales - p.totalPurchase
             }
             else {
-                data.push({ date: purchaseDate, purchase: p.totalPurchase, sales: 0, profit: 0 - p.totalPurchase })
+                data.push({ 
+                    date: purchaseDate, 
+                    purchase: p.totalPurchase, 
+                    gcash: 0, 
+                    sales: 0, 
+                    cash: 0,
+                    profit: 0 - p.totalPurchase })
             }
 
             if (startIndex === 0) {
@@ -167,7 +181,9 @@ const CHART_COLORS = {
 export interface ChartData { 
     date: Date, 
     purchase: number, 
+    gcash: number,
     sales: number, 
+    cash: number, 
     profit: number 
 }
 
@@ -175,6 +191,7 @@ export interface DailySalesReport {
     reportYear: number,
     reportMonth: number,
     reportDate: number,
+    totalGCash: number,
     totalSales: number
 }
 

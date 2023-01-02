@@ -27,15 +27,14 @@ export default function Login() {
       <ContentStyle>
         <Stack sx={{ mb: 5 }}>
           <Typography variant="h4" gutterBottom>
-              Register to N'Tea Fruit Shop
+              Change Password
           </Typography>
-          <Typography sx={{ color: 'text.secondary' }}>Enter your details below.</Typography>
+          <Typography sx={{ color: 'text.secondary' }}>Enter your email and new password below.</Typography>
         </Stack>
         <RegisterForm />
         <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-          Already have an account?&nbsp;
           <Link variant="subtitle2" onClick={() => navigate("/auth/login")}>
-            Login
+            Go Back to Login
           </Link>
         </Typography>
       </ContentStyle>

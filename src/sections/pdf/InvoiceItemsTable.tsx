@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         <InvoiceTableHeader />
         <InvoiceTableRow items={invoice.orderItems} />
         <InvoiceTableBlankSpace rowsCount={ tableRowsCount - invoice.orderItems.length} />
-        <InvoiceTableFooter total={invoice.totalAmount} />
+        <InvoiceTableFooter total={invoice.totalAmount} paid={invoice.paidAmount} discounted={invoice.discounted} />
     </View>
   );
   

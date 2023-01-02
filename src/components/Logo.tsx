@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 function Logo() {
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
-        <Avatar alt="logo" src="https://res.cloudinary.com/ddpqji6uq/image/upload/v1661866066/graphql_images/n_tea-logo_rntoqs.png" />
+        <Avatar alt="logo" src="https://res.cloudinary.com/ddpqji6uq/image/upload/v1667024661/graphql_images/ntea-logo_zucmny.jpg" />
         <Typography variant="h6" color="black" noWrap component="div">
             N'Tea Fruitshop
         </Typography>

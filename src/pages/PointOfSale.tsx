@@ -117,6 +117,7 @@ export interface CustomerOrder {
   paymentType: "CASH" | "GCASH"
   transactionId: string | null
   orderItems: CustomerOrderItem[]
+  discounted: boolean
   timestamp: Date
   cancelled: boolean
 }

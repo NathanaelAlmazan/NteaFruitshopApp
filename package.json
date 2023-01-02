@@ -1,6 +1,6 @@
 {
   "name": "fruitshop-frontend",
-  "productName": "N'tea Fruitshop",
+  "productName": "N'Tea Fruit Shop",
   "version": "1.2.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
@@ -19,12 +19,16 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "./src/images/icon" 
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "ntea-fruitshop"
+            "name": "NTeaFruitShop",
+            "iconUrl": "https://res.cloudinary.com/ddpqji6uq/image/upload/v1667024661/graphql_images/ntea-logo_zucmny.jpg",
+            "setupIcon": "./src/images/icon.ico"
           }
         },
         {

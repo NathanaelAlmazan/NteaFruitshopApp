@@ -38,9 +38,8 @@ function Login() {
         </Stack>
         <LoginForm />
         <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-          Don’t have an account?&nbsp;
           <Link variant="subtitle2" onClick={() => navigate("/auth/register")}>
-            Register
+            Forgot Password?
           </Link>
         </Typography>
       </ContentStyle>
