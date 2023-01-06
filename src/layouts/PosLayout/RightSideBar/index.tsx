@@ -51,10 +51,14 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
   const matches = useMediaQuery(theme.breakpoints.up('lg'))
   const { insert, data, error } = useMutation<CustomerOrder>()
   const [paymentType, setPaymentType] = useState<PaymentType>("cash")
-  const [discounted, setDiscounted] = useState<boolean>(false);
+  const [discount, setDiscount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
   const [invoice, setInvoice] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (cart.totalPrice === 0) setDiscount(0);
+  }, [cart.totalPrice])
 
   useEffect(() => {
     if (data) {
@@ -71,18 +75,18 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
   const handleAddQuantity = (code: string, type: string) => dispatch(addQuantity({ code, type }))
   const handleRemoveAll = () => dispatch(removeAll())
 
-  const handleToggleDiscount = () => setDiscounted(!discounted);
+  const handleDiscountChange = (discount: number) => setDiscount(discount); 
 
   const handlePaymentTypeChange = (type: PaymentType) => setPaymentType(type)
 
   const handleSubmitOrder = (account: string, amount: number) => {
     setLoading(true)
     const formData = {
-        totalAmount: discounted ? (cart.totalPrice * 0.80) : cart.totalPrice,
+        totalAmount: cart.totalPrice - discount,
         paymentType: paymentType.toUpperCase(),
         paidAmount: paymentType === "cash" ? amount : null,
         transactionId: paymentType === "gcash" ? account : null,
-        discounted: discounted,
+        discount: discount,
         orderItems: cart.items.map(item => ({
             productCode: item.product.productCode,
             unitCode: item.unitType,
@@ -205,16 +209,16 @@ export default function RightSideBar({ open, handleDrawerClose }: RightSideBarPr
             }}
         >
             <CheckOutCard 
-                totalPrice={discounted ? (cart.totalPrice * 0.80) : cart.totalPrice}
+                totalPrice={cart.totalPrice}
                 type={paymentType} 
                 changeType={handlePaymentTypeChange} 
-                discounted={discounted}
-                onDiscountChange={handleToggleDiscount}
+                discount={discount}
+                onDiscountChange={handleDiscountChange}
             />
 
             <PaymentCard 
                 type={paymentType}
-                totalPrice={discounted ? (cart.totalPrice * 0.80) : cart.totalPrice}
+                totalPrice={cart.totalPrice - discount}
                 checkoutOrder={handleSubmitOrder}
                 loading={loading}
                 error={error ? error.errors[0] : null}

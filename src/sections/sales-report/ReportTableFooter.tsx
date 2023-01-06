@@ -9,32 +9,46 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         alignItems: 'center',
         height: 24,
+        width: '100%',
         fontSize: 12,
         fontStyle: 'bold',
     },
     description: {
-        width: '40%',
+        width: '70%',
         textAlign: 'right',
         borderRightColor: borderColor,
         borderRightWidth: 1,
         paddingRight: 8,
     },
     total: {
-        width: '20%',
+        width: '30%',
         textAlign: 'right',
         paddingRight: 8,
     },
   });
 
 
-const ReportTableFooter = ({ sales, purchase, profit }: { sales: number, purchase: number, profit: number }) => {
+
+const ReportTableFooter = ({ cash, gcash, purchase, profit }: { cash: number, gcash: number, purchase: number, profit: number }) => {
     return(    
-        <View style={styles.row}>
-            <Text style={styles.description}>TOTAL</Text>
-            <Text style={styles.total}>{`PHP ${sales.toFixed(2)}`}</Text>
-            <Text style={styles.total}>{`PHP ${purchase.toFixed(2)}`}</Text>
-            <Text style={styles.total}>{`PHP ${profit.toFixed(2)}`}</Text>
-        </View>
+        <>
+            <View style={styles.row}>
+                <Text style={styles.description}>TOTAL CASH</Text>
+                <Text style={styles.total}>{`PHP ${cash.toFixed(2)}`}</Text>
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.description}>TOTAL GCASH</Text>
+                <Text style={styles.total}>{`PHP ${gcash.toFixed(2)}`}</Text>
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.description}>TOTAL PAYABLE</Text>
+                <Text style={styles.total}>{`PHP ${purchase.toFixed(2)}`}</Text>
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.description}>TOTAL REVENUE</Text>
+                <Text style={styles.total}>{`PHP ${profit.toFixed(2)}`}</Text>
+            </View>
+        </>
     )
 };
   

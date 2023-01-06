@@ -9,13 +9,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#bff0fd',
         borderBottomWidth: 1,
         alignItems: 'center',
-        height: 24,
+        height: 10,
         textAlign: 'center',
         fontStyle: 'bold',
         flexGrow: 1,
     },
     description: {
-        width: '60%',
+        width: '50%',
         borderRightColor: borderColor,
         borderRightWidth: 1,
     },
@@ -25,12 +25,12 @@ const styles = StyleSheet.create({
         borderRightWidth: 1,
     },
     rate: {
-        width: '15%',
+        width: '20%',
         borderRightColor: borderColor,
         borderRightWidth: 1,
     },
     amount: {
-        width: '15%'
+        width: '20%'
     },
   });
 

@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
   const ReportTableHeader = () => (
     <View style={styles.container}>
         <Text style={styles.description}>Report Date</Text>
-        <Text style={styles.qty}>Cash Receivable</Text>
-        <Text style={styles.qty}>GCash Receivable</Text>
+        <Text style={styles.qty}>Cash</Text>
+        <Text style={styles.qty}>GCash</Text>
         <Text style={styles.rate}>Payable</Text>
         <Text style={styles.amount}>Profit</Text>
     </View>

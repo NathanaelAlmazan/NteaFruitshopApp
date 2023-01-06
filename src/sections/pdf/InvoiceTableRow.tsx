@@ -10,34 +10,30 @@ const styles = StyleSheet.create({
         borderBottomColor: '#bff0fd',
         borderBottomWidth: 1,
         alignItems: 'center',
-        height: 24,
+        height: 10,
         fontStyle: 'bold',
     },
     description: {
-        width: '60%',
+        width: '50%',
         textAlign: 'left',
         borderRightColor: borderColor,
         borderRightWidth: 1,
-        paddingLeft: 8,
     },
     qty: {
         width: '10%',
         borderRightColor: borderColor,
         borderRightWidth: 1,
-        textAlign: 'right',
-        paddingRight: 8,
+        textAlign: 'right'
     },
     rate: {
-        width: '15%',
+        width: '20%',
         borderRightColor: borderColor,
         borderRightWidth: 1,
-        textAlign: 'right',
-        paddingRight: 8,
+        textAlign: 'right'
     },
     amount: {
-        width: '15%',
-        textAlign: 'right',
-        paddingRight: 8,
+        width: '20%',
+        textAlign: 'right'
     },
   });
 
@@ -52,8 +48,8 @@ const InvoiceTableRow = ({ items }: { items: CustomerOrderItem[] }) => {
             <View style={styles.row} key={key}>
                 <Text style={styles.description}>{`${item.product.productName} (${item.unitCode.toUpperCase()})`}</Text>
                 <Text style={styles.qty}>{item.quantity}</Text>
-                <Text style={styles.rate}>{`PHP ${unitPrice.toFixed(2)}`}</Text>
-                <Text style={styles.amount}>{`PHP ${(finalPrice * item.quantity).toFixed(2)}`}</Text>
+                <Text style={styles.rate}>{`P ${unitPrice.toFixed(2)}`}</Text>
+                <Text style={styles.amount}>{`P ${(finalPrice * item.quantity).toFixed(2)}`}</Text>
             </View>
         )
         })

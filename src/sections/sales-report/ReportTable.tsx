@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
         <ReportRow items={reports} />
         <InvoiceTableBlankSpace rowsCount={reports.length > tableRowsCount ? 0 : tableRowsCount - reports.length} />
         <ReportTableFooter 
-          sales={reports.map(r => r.sales).reduce((a, b) => a + b, 0)} 
+          cash={reports.map(r => r.cash).reduce((a, b) => a + b, 0)} 
+          gcash={reports.map(r => r.gcash).reduce((a, b) => a + b, 0)}
           purchase={reports.map(r => r.purchase).reduce((a, b) => a + b, 0)} 
           profit={reports.map(r => r.profit).reduce((a, b) => a + b, 0)}
         />

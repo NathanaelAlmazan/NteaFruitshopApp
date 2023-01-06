@@ -4,9 +4,9 @@ import Grid from "@mui/material/Grid"
 import Stack from "@mui/material/Stack"
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
+import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
+import InputAdornment from '@mui/material/InputAdornment'
 import { useTheme } from '@mui/material/styles'
 // icons
 import PaymentsIcon from '@mui/icons-material/Payments';
@@ -17,12 +17,37 @@ interface CheckOutCardProps {
     totalPrice: number
     type: PaymentType
     changeType: (type: PaymentType) => void
-    discounted: boolean
-    onDiscountChange: () => void
+    discount: number
+    onDiscountChange: (discount: number) => void
 }
 
-export default function CheckOutCard({ totalPrice, type, discounted, onDiscountChange, changeType }: CheckOutCardProps) {
-  const theme = useTheme()
+export default function CheckOutCard({ totalPrice, type, discount, onDiscountChange, changeType }: CheckOutCardProps) {
+  const theme = useTheme();
+  const [percent, setPercent] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    if (totalPrice === 0) setPercent(0);
+  }, [totalPrice])
+  
+  const handlePercentDiscountChange = (value: number) => {
+    if (!isNaN(value)) {
+        setPercent(value);
+        onDiscountChange(totalPrice * (value * 0.01))
+    } else {
+        onDiscountChange(0);
+        setPercent(0);
+    }
+  }
+
+  const handlePesoDiscountChange = (value: number) => {
+    if (!isNaN(value)) {
+        onDiscountChange(value);
+        setPercent((value / totalPrice) * 100);
+    } else {
+        onDiscountChange(0);
+        setPercent(0);
+    }
+  }
 
   return (
     <Card sx={{ width: "100%", pt: 3, pl: 3, pr: 3, pb: 1 }}>
@@ -37,7 +62,7 @@ export default function CheckOutCard({ totalPrice, type, discounted, onDiscountC
                     Amount Due
                 </Typography>
                 <Typography variant="h5" component="div" sx={{ color: theme.palette.success.dark }}>
-                    {`₱ ${totalPrice.toFixed(2)}`}
+                    {`₱ ${(totalPrice - discount).toFixed(2)}`}
                 </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -66,15 +91,36 @@ export default function CheckOutCard({ totalPrice, type, discounted, onDiscountC
                     </Button>
                 </Stack>
             </Grid>
-            <Grid item xs={12}>
-                <FormControlLabel 
-                    label="PWD or Senior Citizen?"
-                    control={
-                        <Checkbox 
-                            checked={discounted}
-                            onChange={onDiscountChange}
-                        />
-                    }
+            <Grid item xs={12} md={6}>
+                <TextField 
+                    label="Discount in Percent"
+                    name="percent"
+                    type="number"
+                    fullWidth
+                    InputProps={{
+                        endAdornment: 
+                        <InputAdornment position="end">%</InputAdornment>
+                    }}
+                    inputProps={{ min: 0, max: 100 }}
+                    value={parseInt(percent.toFixed(2))}
+                    onChange={(event) => handlePercentDiscountChange(parseFloat(event.target.value))}
+                    sx={{ mt: 2 }}
+                />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <TextField 
+                    label="Discount in Peso"
+                    name="peso"
+                    type="number"
+                    fullWidth
+                    InputProps={{
+                        startAdornment: 
+                        <InputAdornment position="start">₱</InputAdornment>
+                    }}
+                    inputProps={{ min: 0, max: 100 }}
+                    value={discount}
+                    onChange={(event) => handlePesoDiscountChange(parseFloat(event.target.value))}
+                    sx={{ mt: 2 }}
                 />
             </Grid>
         </Grid>

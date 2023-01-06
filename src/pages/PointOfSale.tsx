@@ -87,6 +87,7 @@ export interface Product {
   productImage: string,
   isActive: boolean,
   categoryId: number,
+  available: boolean,
   productCategory: Category | null
 }
 
@@ -117,7 +118,7 @@ export interface CustomerOrder {
   paymentType: "CASH" | "GCASH"
   transactionId: string | null
   orderItems: CustomerOrderItem[]
-  discounted: boolean
+  discount: number
   timestamp: Date
   cancelled: boolean
 }

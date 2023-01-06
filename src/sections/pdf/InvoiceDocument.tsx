@@ -10,10 +10,10 @@ import { CustomerOrder } from "../../pages/PointOfSale"
 const styles = StyleSheet.create({
     page: {
         fontFamily: 'Helvetica',
-        fontSize: 11,
-        paddingTop: 30,
-        paddingLeft:60,
-        paddingRight:60,
+        fontSize: 5,
+        paddingTop: 5,
+        paddingLeft: 5,
+        paddingRight: 5,
         lineHeight: 1.5,
         flexDirection: 'column',
     }
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   
 const Invoice = ({ invoice }: { invoice: CustomerOrder }) => (
             <Document>
-                <Page size="A4" style={styles.page}>
+                <Page size="C8" style={styles.page}>
                     <InvoiceTitle title="N'Tea Fruitshop" />
                     <InvoiceNo invoice={invoice}/>
                     <InvoiceItemsTable invoice={invoice} />

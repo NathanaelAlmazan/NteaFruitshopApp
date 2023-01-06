@@ -87,7 +87,12 @@ export default function AdminProductCard({ product, deleteProduct }: ProductCard
           <Typography variant="subtitle2">{productName}</Typography>
         }
         subheader={
-          <Typography variant="body2">{productCategory ? productCategory.categoryName : "Unassigned"}</Typography>
+          <Typography variant="body2">
+            {productCategory ? productCategory.categoryName : "Unassigned"}
+            {!product.available && (
+              <span style={{ color: "red" }}>{" (Not Available)"}</span>
+            )}
+          </Typography>
         }
       />
 

@@ -8,43 +8,45 @@ const styles = StyleSheet.create({
         borderBottomColor: '#bff0fd',
         borderBottomWidth: 1,
         alignItems: 'center',
-        height: 24,
-        fontSize: 12,
+        height: 10,
+        fontSize: 5,
         fontStyle: 'bold',
     },
     description: {
-        width: '85%',
+        width: '80%',
         textAlign: 'right',
         borderRightColor: borderColor,
-        borderRightWidth: 1,
-        paddingRight: 8,
+        borderRightWidth: 1
     },
     total: {
-        width: '15%',
-        textAlign: 'right',
-        paddingRight: 8,
+        width: '20%',
+        textAlign: 'right'
     },
   });
 
 
-const InvoiceTableFooter = ({ total, paid, discounted }: { total: number, paid: number, discounted: boolean }) => {
+const InvoiceTableFooter = ({ total, paid, discount }: { total: number, paid: number, discount: number }) => {
     return(    
         <>
             <View style={styles.row}>
                 <Text style={styles.description}>TOTAL AMOUNT</Text>
-                <Text style={styles.total}>{total.toFixed(2)}</Text>
+                <Text style={styles.total}>{"P " + (total + discount).toFixed(2)}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.description}>DISCOUNT</Text>
-                <Text style={styles.total}>{discounted ? "20%" : "0%"}</Text>
+                <Text style={styles.total}>{"P " + discount.toFixed(2)}</Text>
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.description}>AMOUNT DUE</Text>
+                <Text style={styles.total}>{"P " + total.toFixed(2)}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.description}>PAID AMOUNT</Text>
-                <Text style={styles.total}>{paid ? paid.toFixed(2) : total.toFixed(2)}</Text>
+                <Text style={styles.total}>{paid ? "P " + paid.toFixed(2) : total.toFixed(2)}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.description}>CHANGE</Text>
-                <Text style={styles.total}>{paid ? (paid - total).toFixed(2) : 0.00}</Text>
+                <Text style={styles.total}>{paid ? "P " + (paid - total).toFixed(2) : 0.00}</Text>
             </View>
         </>
     )

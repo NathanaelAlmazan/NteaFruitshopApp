@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 // mui
 import Grid from "@mui/material/Grid"
@@ -9,6 +9,8 @@ import MenuItem from "@mui/material/MenuItem"
 import Button from "@mui/material/Button"
 import FormHelperText from '@mui/material/FormHelperText'
 import Typography from '@mui/material/Typography'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
 // validator
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -37,6 +39,7 @@ interface ProductFormData {
 export default function ProductForm({ categories, units, image, product }: ProductFormProps) {
   const navigate = useNavigate()
   const { insert, update, error, data } = useMutation<Product>()
+  const [available, setAvailable]= useState<boolean>(product.available);
  
   const renderDefaultValue = () => {
     const defaultValue: ProductFormData = {
@@ -98,6 +101,7 @@ export default function ProductForm({ categories, units, image, product }: Produ
                     productName: values.name,
                     discountedPrice: values.discount,
                     categoryId: values.categoryId,
+                    available: available,
                     productImage: product.productImage,
                     unitPrices: Object.keys(values).filter(v => units.find(u => u.unitCode === v) !== undefined).map(p => ({ unitType: p, unitPrice: values[p] }))
                 }
@@ -199,6 +203,18 @@ export default function ProductForm({ categories, units, image, product }: Produ
                                 />
                             </Grid>
                     ))}
+
+                    <Grid item xs={12}>
+                        <FormControlLabel 
+                            label="Available"
+                            control={
+                                <Checkbox 
+                                    checked={available}
+                                    onChange={() => setAvailable(!available)}
+                                />
+                            }
+                        />
+                    </Grid>
 
                     {errors.submit || error && (
                         <Grid item xs={12}>

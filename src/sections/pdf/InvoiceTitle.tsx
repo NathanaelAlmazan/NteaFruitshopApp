@@ -5,19 +5,16 @@ const styles = StyleSheet.create({
    
     titleContainer:{
         flexDirection: 'row',
-        marginTop: 24,
     },
     reportTitle:{
         color: '#61dafb',
-        letterSpacing: 4,
-        fontSize: 25,
+        fontSize: 6,
         textAlign: 'center',
         textTransform: 'uppercase',
-        marginTop: 18
     },
     logo: {
-        width: 50,
-        height: 50
+        width: 10,
+        height: 10
     }
   });
 

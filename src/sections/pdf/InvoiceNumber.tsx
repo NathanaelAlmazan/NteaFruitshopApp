@@ -6,7 +6,6 @@ import { CustomerOrder } from "../../pages/PointOfSale"
 const styles = StyleSheet.create({
     invoiceNoContainer: {
         flexDirection: 'row',
-        marginTop: 36,
         justifyContent: 'flex-end'
     },
     invoiceDateContainer: {
@@ -14,11 +13,11 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end'
     },
     invoiceDate: {
-            fontSize: 12,
+            fontSize: 5,
             fontStyle: 'bold',
     },
     label: {
-        width: 60
+        width: 30
     }
     
   });

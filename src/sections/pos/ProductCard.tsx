@@ -38,7 +38,7 @@ export default function ShopProductCard({ product, selectProduct }: ProductCardP
   const [hovered, setHovered] = useState<boolean>(false);
 
   return (
-    <Card onClick={selectProduct} sx={{ cursor: "pointer" }}>
+    <Card onClick={product.available ? selectProduct : undefined} sx={{ cursor: "pointer" }}>
       <Box onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} sx={{ pt: '100%', position: 'relative' }}>
         {hovered && (
           <Typography 
@@ -55,7 +55,7 @@ export default function ShopProductCard({ product, selectProduct }: ProductCardP
               p: 1
             }}
           >
-            Click to Add in Cart
+            {product.available ? "Click to Add in Cart" : "Product is not available"}
           </Typography>
         )}
         <ProductImgStyle alt={productName} src={productImage} />
@@ -70,6 +70,9 @@ export default function ShopProductCard({ product, selectProduct }: ProductCardP
           </Link>
           <Typography variant="caption">
             {productCategory ? productCategory.categoryName : "Unassigned"}
+            {!product.available && (
+              <span style={{ color: "red" }}>{" (Not Available)"}</span>
+            )}
           </Typography>
         </div>
 
